@@ -10,11 +10,24 @@ import ChatDrawer from './components/ChatDrawer';
 import HostSettingsModal from './components/HostSettingsModal';
 import { sounds } from './audio';
 
-// Dynamic socket URL: honors VITE_SOCKET_URL if provided, else localhost in dev, or origin in prod
-const SOCKET_URL = import.meta.env?.VITE_SOCKET_URL || (window.location.hostname === 'localhost' ? 'http://localhost:3001' : '/');
+// Dynamic socket URL: honors VITE_SOCKET_URL, auto-detects dev port 5173 to backend 3001, or uses origin
+const getSocketUrl = () => {
+  if (import.meta.env?.VITE_SOCKET_URL) return import.meta.env.VITE_SOCKET_URL;
+  if (typeof window !== 'undefined') {
+    // When accessing Vite dev server (port 5173), direct socket to backend port 3001 using the current hostname/IP
+    if (window.location.port === '5173') {
+      return `${window.location.protocol}//${window.location.hostname}:3001`;
+    }
+    // In production / Render / unified Express server
+    return '/';
+  }
+  return 'http://localhost:3001';
+};
+const SOCKET_URL = getSocketUrl();
 
 export default function App() {
   const [socket, setSocket] = useState(null);
+  const [isConnected, setIsConnected] = useState(false);
   const [inRoom, setInRoom] = useState(false);
   const [roomCode, setRoomCode] = useState('');
   const [tableState, setTableState] = useState(null);
@@ -51,11 +64,25 @@ export default function App() {
   // Initialize socket connection
   useEffect(() => {
     const s = io(SOCKET_URL, {
-      transports: ['websocket', 'polling']
+      transports: ['websocket', 'polling'],
+      reconnectionAttempts: 10,
+      reconnectionDelay: 1000
     });
 
     s.on('connect', () => {
       console.log('[PokerTab] Connected to real-time engine:', s.id);
+      setIsConnected(true);
+      setErrorMsg('');
+    });
+
+    s.on('connect_error', (err) => {
+      console.warn('[PokerTab] Socket connection error:', err?.message);
+      setIsConnected(false);
+    });
+
+    s.on('disconnect', () => {
+      console.log('[PokerTab] Disconnected from engine');
+      setIsConnected(false);
     });
 
     s.on('TABLE_STATE', (state) => {
@@ -82,49 +109,67 @@ export default function App() {
       setChatMessages((prev) => [...prev, msg]);
     });
 
-    s.on('disconnect', () => {
-      console.log('[PokerTab] Disconnected from engine');
-    });
-
     setSocket(s);
     return () => s.disconnect();
   }, [player.id]);
 
   // Room Creation
   const handleCreateRoom = ({ name, team, config }) => {
+    if (!socket) {
+      setErrorMsg('Game engine not initialized. Please refresh.');
+      return;
+    }
     setLoading(true);
     setErrorMsg('');
     const updatedPlayer = { ...player, name, team };
     setPlayer(updatedPlayer);
 
-    socket.emit('CREATE_ROOM', { hostPlayer: updatedPlayer, config }, (res) => {
+    // Safety timeout in case backend takes too long or fails to respond
+    const timer = setTimeout(() => {
       setLoading(false);
-      if (res.success) {
+      setErrorMsg('Server took too long to respond. Please check server connection.');
+    }, 6000);
+
+    socket.emit('CREATE_ROOM', { hostPlayer: updatedPlayer, config }, (res) => {
+      clearTimeout(timer);
+      setLoading(false);
+      if (res?.success) {
         setRoomCode(res.roomCode);
         setInRoom(true);
       } else {
-        setErrorMsg(res.error || 'Failed to create room');
+        setErrorMsg(res?.error || 'Failed to create room');
       }
     });
   };
 
   // Join Room
   const handleJoinRoom = ({ roomCode: code, name, team }) => {
+    if (!socket) {
+      setErrorMsg('Game engine not initialized. Please refresh.');
+      return;
+    }
     setLoading(true);
     setErrorMsg('');
     const updatedPlayer = { ...player, name, team };
     setPlayer(updatedPlayer);
 
-    socket.emit('JOIN_ROOM', { roomCode: code, player: updatedPlayer }, (res) => {
+    const timer = setTimeout(() => {
       setLoading(false);
-      if (res.success) {
+      setErrorMsg('Server took too long to respond. Please check server connection.');
+    }, 6000);
+
+    socket.emit('JOIN_ROOM', { roomCode: code, player: updatedPlayer }, (res) => {
+      clearTimeout(timer);
+      setLoading(false);
+      if (res?.success) {
         setRoomCode(res.roomCode);
         setInRoom(true);
       } else {
-        setErrorMsg(res.error || 'Failed to join room');
+        setErrorMsg(res?.error || 'Failed to join room');
       }
     });
   };
+
 
   // Sit Down
   const handleSit = (seatNumber) => {
@@ -219,7 +264,9 @@ export default function App() {
         initialName={player.name}
         loading={loading}
         errorMessage={errorMsg}
+        isConnected={isConnected}
       />
+
     );
   }
 

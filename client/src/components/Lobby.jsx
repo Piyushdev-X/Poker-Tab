@@ -1,7 +1,7 @@
 // client/src/components/Lobby.jsx
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Shield, Users, Clock, Flame, Zap, ArrowRight, Play, PlusCircle, Check } from 'lucide-react';
+import { Shield, Users, Clock, Flame, Zap, ArrowRight, Play, PlusCircle, Check, RefreshCw } from 'lucide-react';
 
 const TEAMS = [
   {
@@ -27,15 +27,26 @@ const TEAMS = [
   }
 ];
 
+const RANDOM_NAMES = [
+  'Doyle', 'Ivey', 'Brunson', 'Maverick', 'Vegas_Kid',
+  'River_King', 'FullHouse', 'HighRoller', 'ChipLeader', 'AceHigh'
+];
+
 export default function Lobby({
   onCreateRoom,
   onJoinRoom,
   initialName = '',
   loading = false,
-  errorMessage = ''
+  errorMessage = '',
+  isConnected = true
 }) {
   const [tab, setTab] = useState('CREATE'); // 'CREATE' or 'JOIN'
-  const [playerName, setPlayerName] = useState(initialName || '');
+  const [playerName, setPlayerName] = useState(() => {
+    if (initialName && initialName.trim()) return initialName.trim();
+    const pick = RANDOM_NAMES[Math.floor(Math.random() * RANDOM_NAMES.length)];
+    return `${pick}_${Math.floor(10 + Math.random() * 90)}`;
+  });
+  const [nameError, setNameError] = useState('');
   const [selectedTeam, setSelectedTeam] = useState('ALPHA');
   const [joinCode, setJoinCode] = useState('');
 
@@ -48,9 +59,20 @@ export default function Lobby({
   const [teamMode, setTeamMode] = useState(true);
   const [teammateSweatMode, setTeammateSweatMode] = useState(true);
 
+  const handleRandomizeName = () => {
+    const pick = RANDOM_NAMES[Math.floor(Math.random() * RANDOM_NAMES.length)];
+    const generated = `${pick}_${Math.floor(10 + Math.random() * 90)}`;
+    setPlayerName(generated);
+    setNameError('');
+  };
+
   const handleCreate = (e) => {
-    e.preventDefault();
-    if (!playerName.trim()) return;
+    if (e && e.preventDefault) e.preventDefault();
+    if (!playerName || !playerName.trim()) {
+      setNameError('Please enter a player handle before launching');
+      return;
+    }
+    setNameError('');
 
     onCreateRoom({
       name: playerName.trim(),
@@ -69,8 +91,16 @@ export default function Lobby({
   };
 
   const handleJoin = (e) => {
-    e.preventDefault();
-    if (!playerName.trim() || !joinCode.trim()) return;
+    if (e && e.preventDefault) e.preventDefault();
+    if (!playerName || !playerName.trim()) {
+      setNameError('Please enter a player handle first');
+      return;
+    }
+    if (!joinCode || !joinCode.trim()) {
+      setNameError('Please enter the 6-character room code');
+      return;
+    }
+    setNameError('');
 
     onJoinRoom({
       roomCode: joinCode.trim().toUpperCase(),
@@ -102,20 +132,38 @@ export default function Lobby({
           <p className="text-xs md:text-sm font-mono text-slate-400 mt-1">
             Real-Time Tabletop Engine & Team Settlement Ledger
           </p>
+
+          {/* Connection status badge */}
+          <div className="mt-2.5 flex items-center gap-1.5">
+            <span className={`w-2 h-2 rounded-full ${isConnected ? 'bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.6)]' : 'bg-amber-400 animate-pulse'}`} />
+            <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400">
+              {isConnected ? 'Engine Online' : 'Connecting Engine...'}
+            </span>
+          </div>
         </div>
 
         {/* Error Alert if any */}
-        {errorMessage && (
-          <div className="mb-4 p-3 rounded-xl bg-red-950/40 border border-red-500/40 text-red-300 text-xs font-mono">
-            {errorMessage}
+        {(errorMessage || nameError) && (
+          <div className="mb-4 p-3 rounded-xl bg-red-950/40 border border-red-500/40 text-red-300 text-xs font-mono flex items-center justify-between">
+            <span>{errorMessage || nameError}</span>
+            {nameError && (
+              <button
+                type="button"
+                onClick={() => setNameError('')}
+                className="text-red-400 hover:text-red-200 ml-2"
+              >
+                ✕
+              </button>
+            )}
           </div>
         )}
 
         {/* Toggle Mode: Create Room vs Join Code */}
         <div className="flex items-center gap-1 bg-obsidian-deep/80 p-1 rounded-2xl border border-white/5 mb-6">
           <button
-            onClick={() => setTab('CREATE')}
-            className={`flex-1 py-2 text-xs font-mono uppercase tracking-wider font-bold rounded-xl transition-all ${
+            type="button"
+            onClick={() => { setTab('CREATE'); setNameError(''); }}
+            className={`flex-1 py-2 text-xs font-mono uppercase tracking-wider font-bold rounded-xl transition-all cursor-pointer ${
               tab === 'CREATE'
                 ? 'bg-brass text-obsidian shadow-md'
                 : 'text-slate-400 hover:text-white'
@@ -124,8 +172,9 @@ export default function Lobby({
             Create Table
           </button>
           <button
-            onClick={() => setTab('JOIN')}
-            className={`flex-1 py-2 text-xs font-mono uppercase tracking-wider font-bold rounded-xl transition-all ${
+            type="button"
+            onClick={() => { setTab('JOIN'); setNameError(''); }}
+            className={`flex-1 py-2 text-xs font-mono uppercase tracking-wider font-bold rounded-xl transition-all cursor-pointer ${
               tab === 'JOIN'
                 ? 'bg-brass text-obsidian shadow-md'
                 : 'text-slate-400 hover:text-white'
@@ -135,19 +184,38 @@ export default function Lobby({
           </button>
         </div>
 
-        {/* Player Name Input */}
+        {/* Player Name Input (with iOS friendly touch controls) */}
         <div className="mb-5">
-          <label className="block text-[11px] font-mono uppercase tracking-wider text-slate-400 mb-1.5 font-bold">
-            Player Handle / Nickname
-          </label>
+          <div className="flex items-center justify-between mb-1.5">
+            <label htmlFor="player-handle-input" className="block text-[11px] font-mono uppercase tracking-wider text-slate-400 font-bold">
+              Player Handle / Nickname
+            </label>
+            <button
+              type="button"
+              onClick={handleRandomizeName}
+              className="text-[10px] font-mono text-brass hover:text-brass-light flex items-center gap-1 cursor-pointer transition-colors"
+            >
+              <RefreshCw className="w-3 h-3" />
+              <span>Randomize</span>
+            </button>
+          </div>
           <input
+            id="player-handle-input"
             type="text"
             required
             maxLength={18}
+            autoCapitalize="words"
+            autoCorrect="off"
+            spellCheck="false"
             placeholder="e.g. Doyle Brunson"
             value={playerName}
-            onChange={(e) => setPlayerName(e.target.value)}
-            className="w-full bg-obsidian-deep border border-white/10 rounded-xl px-4 py-3 text-sm font-mono text-slate-100 placeholder:text-slate-600 focus:outline-none focus:border-brass/60 transition-colors"
+            onChange={(e) => {
+              setPlayerName(e.target.value);
+              if (nameError) setNameError('');
+            }}
+            className={`w-full bg-obsidian-deep border rounded-xl px-4 py-3 text-sm font-mono text-slate-100 placeholder:text-slate-600 focus:outline-none transition-colors ${
+              nameError ? 'border-red-500/80 ring-1 ring-red-500/30' : 'border-white/10 focus:border-brass/60'
+            }`}
           />
         </div>
 
@@ -162,7 +230,7 @@ export default function Lobby({
               <button
                 type="button"
                 onClick={() => setTeamMode(!teamMode)}
-                className={`w-9 h-5 rounded-full p-0.5 transition-colors ${
+                className={`w-9 h-5 rounded-full p-0.5 transition-colors cursor-pointer ${
                   teamMode ? 'bg-brass' : 'bg-slate-800'
                 }`}
               >
@@ -184,7 +252,7 @@ export default function Lobby({
                     type="button"
                     key={t.id}
                     onClick={() => setSelectedTeam(t.id)}
-                    className={`p-3 rounded-xl border flex flex-col items-center justify-center transition-all active:scale-[0.97] ${
+                    className={`p-3 rounded-xl border flex flex-col items-center justify-center transition-all cursor-pointer active:scale-[0.97] touch-manipulation ${
                       isSelected
                         ? `${t.accent} shadow-md ring-1 ring-white/20`
                         : 'border-white/5 bg-obsidian-deep hover:bg-white/5 text-slate-400'
@@ -202,7 +270,7 @@ export default function Lobby({
           )}
         </div>
 
-        {/* Form Body: CREATE vs JOIN */}
+        {/* Tab 1: CREATE TABLE */}
         {tab === 'CREATE' ? (
           <form onSubmit={handleCreate} className="space-y-4">
             {/* Table Settings Grid */}
@@ -215,7 +283,7 @@ export default function Lobby({
                 <select
                   value={startingStack}
                   onChange={(e) => setStartingStack(parseInt(e.target.value))}
-                  className="w-full bg-obsidian-surface border border-white/10 rounded-lg px-2.5 py-1.5 text-xs font-mono text-slate-200 focus:outline-none focus:border-brass"
+                  className="w-full bg-obsidian-surface border border-white/10 rounded-lg px-2.5 py-1.5 text-xs font-mono text-slate-200 focus:outline-none focus:border-brass cursor-pointer"
                 >
                   <option value={1000}>1,000 chips</option>
                   <option value={2000}>2,000 chips (Standard)</option>
@@ -236,7 +304,7 @@ export default function Lobby({
                     setSmallBlind(sb);
                     setBigBlind(bb);
                   }}
-                  className="w-full bg-obsidian-surface border border-white/10 rounded-lg px-2.5 py-1.5 text-xs font-mono text-slate-200 focus:outline-none focus:border-brass"
+                  className="w-full bg-obsidian-surface border border-white/10 rounded-lg px-2.5 py-1.5 text-xs font-mono text-slate-200 focus:outline-none focus:border-brass cursor-pointer"
                 >
                   <option value="5/10">5 / 10</option>
                   <option value="10/20">10 / 20 (Standard)</option>
@@ -253,7 +321,7 @@ export default function Lobby({
                 <select
                   value={turnTimeLimit}
                   onChange={(e) => setTurnTimeLimit(parseInt(e.target.value))}
-                  className="w-full bg-obsidian-surface border border-white/10 rounded-lg px-2.5 py-1.5 text-xs font-mono text-slate-200 focus:outline-none focus:border-brass"
+                  className="w-full bg-obsidian-surface border border-white/10 rounded-lg px-2.5 py-1.5 text-xs font-mono text-slate-200 focus:outline-none focus:border-brass cursor-pointer"
                 >
                   <option value={15}>15 Seconds (Fast)</option>
                   <option value={20}>20 Seconds (Standard)</option>
@@ -269,7 +337,7 @@ export default function Lobby({
                 <select
                   value={timeBankReserve}
                   onChange={(e) => setTimeBankReserve(parseInt(e.target.value))}
-                  className="w-full bg-obsidian-surface border border-white/10 rounded-lg px-2.5 py-1.5 text-xs font-mono text-slate-200 focus:outline-none focus:border-brass"
+                  className="w-full bg-obsidian-surface border border-white/10 rounded-lg px-2.5 py-1.5 text-xs font-mono text-slate-200 focus:outline-none focus:border-brass cursor-pointer"
                 >
                   <option value={20}>+20s Reserve</option>
                   <option value={30}>+30s Reserve (Standard)</option>
@@ -292,7 +360,7 @@ export default function Lobby({
                 <button
                   type="button"
                   onClick={() => setTeammateSweatMode(!teammateSweatMode)}
-                  className={`w-9 h-5 rounded-full p-0.5 transition-colors ${
+                  className={`w-9 h-5 rounded-full p-0.5 transition-colors cursor-pointer ${
                     teammateSweatMode ? 'bg-brass' : 'bg-slate-800'
                   }`}
                 >
@@ -305,11 +373,12 @@ export default function Lobby({
               </div>
             )}
 
-            {/* Launch Table Button */}
+            {/* Launch Table Button (Both touch and click enabled for iOS) */}
             <button
-              type="submit"
-              disabled={loading || !playerName.trim()}
-              className="w-full py-3.5 rounded-xl bg-gradient-to-r from-brass to-brass-dark hover:from-brass-light hover:to-brass text-obsidian font-mono font-bold text-sm uppercase tracking-wider shadow-glow-active transition-all active:scale-[0.98] disabled:opacity-40 flex items-center justify-center gap-2 cursor-pointer"
+              type="button"
+              onClick={handleCreate}
+              disabled={loading}
+              className="w-full py-4 rounded-xl bg-gradient-to-r from-brass to-brass-dark hover:from-brass-light hover:to-brass text-obsidian font-mono font-bold text-sm uppercase tracking-wider shadow-glow-active transition-all active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer touch-manipulation select-none"
             >
               <Play className="w-4 h-4 fill-obsidian" />
               <span>{loading ? 'Creating Room...' : 'Launch Table'}</span>
@@ -325,6 +394,8 @@ export default function Lobby({
                 type="text"
                 required
                 maxLength={6}
+                autoCapitalize="characters"
+                autoCorrect="off"
                 placeholder="e.g. 7K2M9X"
                 value={joinCode}
                 onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
@@ -333,9 +404,10 @@ export default function Lobby({
             </div>
 
             <button
-              type="submit"
-              disabled={loading || !playerName.trim() || !joinCode.trim()}
-              className="w-full py-3.5 rounded-xl bg-gradient-to-r from-brass to-brass-dark hover:from-brass-light hover:to-brass text-obsidian font-mono font-bold text-sm uppercase tracking-wider shadow-glow-active transition-all active:scale-[0.98] disabled:opacity-40 flex items-center justify-center gap-2 cursor-pointer"
+              type="button"
+              onClick={handleJoin}
+              disabled={loading || !joinCode.trim()}
+              className="w-full py-4 rounded-xl bg-gradient-to-r from-brass to-brass-dark hover:from-brass-light hover:to-brass text-obsidian font-mono font-bold text-sm uppercase tracking-wider shadow-glow-active transition-all active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer touch-manipulation select-none"
             >
               <ArrowRight className="w-4 h-4" />
               <span>{loading ? 'Joining Room...' : 'Join Table'}</span>
