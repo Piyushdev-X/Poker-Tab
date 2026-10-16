@@ -1,0 +1,95 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #0A0B0E;
+  color: #F8FAFC;
+  font-family: 'Outfit', -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Strict Tabular Numbers for all financial and timer metrics */
+.tabular-nums {
+  font-family: 'JetBrains Mono', monospace;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+/* Custom Felt Texture & Vignette */
+.poker-felt {
+  background: radial-gradient(ellipse at center, #143527 0%, #0F291E 55%, #081610 100%);
+  box-shadow: inset 0 0 120px rgba(0, 0, 0, 0.85), inset 0 0 25px rgba(0, 0, 0, 0.95);
+}
+
+.table-rail {
+  background: linear-gradient(135deg, #1A1E29 0%, #12151C 50%, #0D0F14 100%);
+  box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.08), inset 0 1px 1px rgba(255, 255, 255, 0.12);
+}
+
+.brass-border {
+  border: 1px solid rgba(197, 160, 89, 0.35);
+  box-shadow: 0 0 12px rgba(197, 160, 89, 0.1);
+}
+
+/* Custom scrollbars for clean cockpit aesthetics */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(10, 11, 14, 0.5);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(197, 160, 89, 0.4);
+}
+
+/* Range slider styling */
+input[type=range] {
+  -webkit-appearance: none;
+  background: transparent;
+}
+
+input[type=range]:focus {
+  outline: none;
+}
+
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  background: #C5A059;
+  border: 2px solid #0A0B0E;
+  box-shadow: 0 0 10px rgba(197, 160, 89, 0.5);
+  cursor: pointer;
+  margin-top: -7px;
+  transition: transform 0.1s ease;
+}
+
+input[type=range]::-webkit-slider-thumb:active {
+  transform: scale(1.15);
+}
+
+input[type=range]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 6px;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}

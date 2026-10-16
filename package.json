@@ -1,0 +1,23 @@
+{
+  "name": "pokertab",
+  "version": "1.0.0",
+  "description": "PokerTab — Production-Ready Real-Time Texas Hold'em Engine & Team Settlement Ledger",
+  "private": true,
+  "scripts": {
+    "start": "node server/index.js",
+    "server": "node --watch server/index.js",
+    "client": "npm --prefix client run dev",
+    "build": "npm --prefix client run build",
+    "test": "node -e \"import('./server/handEvaluator.js').then(m => console.log('HandEvaluator OK'))\""
+  },
+  "keywords": [
+    "poker",
+    "texas-holdem",
+    "realtime",
+    "socketio",
+    "react",
+    "ledger"
+  ],
+  "author": "",
+  "license": "MIT"
+}
