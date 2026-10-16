@@ -10,8 +10,8 @@ import ChatDrawer from './components/ChatDrawer';
 import HostSettingsModal from './components/HostSettingsModal';
 import { sounds } from './audio';
 
-// Dynamic socket URL based on host/environment
-const SOCKET_URL = window.location.hostname === 'localhost' ? 'http://localhost:3001' : '/';
+// Dynamic socket URL: honors VITE_SOCKET_URL if provided, else localhost in dev, or origin in prod
+const SOCKET_URL = import.meta.env?.VITE_SOCKET_URL || (window.location.hostname === 'localhost' ? 'http://localhost:3001' : '/');
 
 export default function App() {
   const [socket, setSocket] = useState(null);
