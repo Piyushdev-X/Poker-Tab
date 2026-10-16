@@ -19,7 +19,7 @@ const getSocketUrl = () => {
       return `${window.location.protocol}//${window.location.hostname}:3001`;
     }
     // In production / Render / unified Express server
-    return '/';
+    return window.location.origin;
   }
   return 'http://localhost:3001';
 };
@@ -64,9 +64,11 @@ export default function App() {
   // Initialize socket connection
   useEffect(() => {
     const s = io(SOCKET_URL, {
-      transports: ['websocket', 'polling'],
-      reconnectionAttempts: 10,
-      reconnectionDelay: 1000
+      transports: ['polling', 'websocket'],
+      reconnection: true,
+      reconnectionAttempts: Infinity,
+      reconnectionDelay: 1000,
+      timeout: 10000
     });
 
     s.on('connect', () => {
