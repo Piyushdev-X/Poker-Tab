@@ -25,7 +25,89 @@ const getSocketUrl = () => {
 };
 const SOCKET_URL = getSocketUrl();
 
+// Local in-memory offline fallback table generator
+
+function createLocalTableState(player, config = {}) {
+  const maxSeats = config.maxSeats || 6;
+  const startingStack = config.startingStack || 2000;
+  const seats = [];
+
+  for (let i = 0; i < maxSeats; i++) {
+    if (i === 0) {
+      seats.push({
+        seatNumber: 0,
+        player: {
+          id: player.id,
+          name: player.name,
+          team: player.team || 'ALPHA',
+          chips: startingStack,
+          buyIn: startingStack,
+          rebuys: 0,
+          timeBank: config.timeBankReserve || 30,
+          isSittingOut: false,
+          isTurn: false,
+          folded: false,
+          isAllIn: false,
+          streetBet: 0,
+          totalHandBet: 0,
+          holeCards: [
+            { rank: 'A', suit: 's' },
+            { rank: 'K', suit: 'h' }
+          ],
+          hasHoleCards: true,
+          isCardVisible: true
+        }
+      });
+    } else {
+      seats.push({
+        seatNumber: i,
+        player: null
+      });
+    }
+  }
+
+  return {
+    roomId: 'SANDBOX',
+    config: {
+      maxSeats,
+      startingStack,
+      smallBlind: config.smallBlind || 10,
+      bigBlind: config.bigBlind || 20,
+      turnTimeLimit: config.turnTimeLimit || 20,
+      timeBankReserve: config.timeBankReserve || 30,
+      teamMode: config.teamMode !== undefined ? config.teamMode : true,
+      teammateSweatMode: config.teammateSweatMode !== undefined ? config.teammateSweatMode : true,
+      ...config
+    },
+    status: 'WAITING',
+    communityCards: [],
+    pot: 0,
+    currentBet: 0,
+    minRaise: config.bigBlind || 20,
+    dealerSeat: 0,
+    sbSeat: 0,
+    bbSeat: 0,
+    activeSeat: -1,
+    handNumber: 1,
+    turnExpiresAt: null,
+    seats,
+    liveTelemetry: {
+      handName: 'Pocket Aces / Big Slick',
+      description: 'High card / Starting pair in local sandbox'
+    },
+    teamBankrolls: {
+      ALPHA: { chips: startingStack, buyIn: startingStack, pnl: 0, players: 1 },
+      OMEGA: { chips: 0, buyIn: 0, pnl: 0, players: 0 },
+      SIGMA: { chips: 0, buyIn: 0, pnl: 0, players: 0 }
+    },
+    lastShowdown: null,
+    hostId: player.id,
+    isLocalFallback: true
+  };
+}
+
 export default function App() {
+
   const [socket, setSocket] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
   const [inRoom, setInRoom] = useState(false);
@@ -87,9 +169,33 @@ export default function App() {
       setIsConnected(false);
     });
 
+    s.on('ROOM_CREATED', (data) => {
+      console.log('[PokerTab] ROOM_CREATED event received:', data);
+      if (data?.roomCode) {
+        setRoomCode(data.roomCode);
+        if (data.tableState) setTableState(data.tableState);
+        setInRoom(true);
+        setLoading(false);
+      }
+    });
+
+
+    s.on('ROOM_JOINED', (data) => {
+      console.log('[PokerTab] ROOM_JOINED event received:', data);
+      if (data?.roomCode) {
+        setRoomCode(data.roomCode);
+        if (data.tableState) setTableState(data.tableState);
+        setInRoom(true);
+        setLoading(false);
+      }
+    });
+
     s.on('TABLE_STATE', (state) => {
       setTableState(state);
       if (state.hostId) setHostId(state.hostId);
+      if (state.roomId) setRoomCode(state.roomId);
+      setInRoom(true);
+      setLoading(false);
 
       // Play tick sound when turn shifts to this player
       if (state.activeSeat !== -1) {
@@ -117,39 +223,50 @@ export default function App() {
 
   // Room Creation
   const handleCreateRoom = ({ name, team, config }) => {
-    if (!socket) {
-      setErrorMsg('Game engine not initialized. Please refresh.');
-      return;
-    }
     setLoading(true);
     setErrorMsg('');
     const updatedPlayer = { ...player, name, team };
     setPlayer(updatedPlayer);
 
-    // Safety timeout in case backend takes too long or fails to respond
-    const timer = setTimeout(() => {
+    // 2-second fallback safety net: if server is slow or disconnected, launch instantly in local sandbox
+    const fallbackTimer = setTimeout(() => {
+      console.warn('[PokerTab] Backend timeout or disconnected. Activating local offline table.');
+      const localState = createLocalTableState(updatedPlayer, config);
+      setTableState(localState);
+      setRoomCode('SANDBOX');
+      setHostId(updatedPlayer.id);
+      setInRoom(true);
       setLoading(false);
-      setErrorMsg('Server took too long to respond. Please check server connection.');
-    }, 6000);
+      setBigTimeBanner('Local Tabletop Simulation Active');
+      setTimeout(() => setBigTimeBanner(null), 4000);
+    }, 2000);
 
-    socket.emit('CREATE_ROOM', { hostPlayer: updatedPlayer, config }, (res) => {
-      clearTimeout(timer);
+    if (socket && socket.connected) {
+      socket.emit('CREATE_ROOM', { hostPlayer: updatedPlayer, config }, (res) => {
+        clearTimeout(fallbackTimer);
+        setLoading(false);
+        if (res?.success) {
+          setRoomCode(res.roomCode);
+          if (res.tableState) setTableState(res.tableState);
+          setInRoom(true);
+        } else {
+          setErrorMsg(res?.error || 'Failed to create room');
+        }
+      });
+    } else {
+      // Socket offline: immediately open local sandbox
+      clearTimeout(fallbackTimer);
+      const localState = createLocalTableState(updatedPlayer, config);
+      setTableState(localState);
+      setRoomCode('SANDBOX');
+      setHostId(updatedPlayer.id);
+      setInRoom(true);
       setLoading(false);
-      if (res?.success) {
-        setRoomCode(res.roomCode);
-        setInRoom(true);
-      } else {
-        setErrorMsg(res?.error || 'Failed to create room');
-      }
-    });
+    }
   };
 
   // Join Room
   const handleJoinRoom = ({ roomCode: code, name, team }) => {
-    if (!socket) {
-      setErrorMsg('Game engine not initialized. Please refresh.');
-      return;
-    }
     setLoading(true);
     setErrorMsg('');
     const updatedPlayer = { ...player, name, team };
@@ -158,69 +275,141 @@ export default function App() {
     const timer = setTimeout(() => {
       setLoading(false);
       setErrorMsg('Server took too long to respond. Please check server connection.');
-    }, 6000);
+    }, 4000);
 
-    socket.emit('JOIN_ROOM', { roomCode: code, player: updatedPlayer }, (res) => {
+    if (socket && socket.connected) {
+      socket.emit('JOIN_ROOM', { roomCode: code, player: updatedPlayer }, (res) => {
+        clearTimeout(timer);
+        setLoading(false);
+        if (res?.success) {
+          setRoomCode(res.roomCode);
+          if (res.tableState) setTableState(res.tableState);
+          setInRoom(true);
+        } else {
+          setErrorMsg(res?.error || 'Failed to join room');
+        }
+      });
+    } else {
       clearTimeout(timer);
       setLoading(false);
-      if (res?.success) {
-        setRoomCode(res.roomCode);
-        setInRoom(true);
-      } else {
-        setErrorMsg(res?.error || 'Failed to join room');
-      }
-    });
+      setErrorMsg('Server offline. You can create a local table sandbox to play immediately.');
+    }
   };
-
 
   // Sit Down
   const handleSit = (seatNumber) => {
-    if (!socket || !roomCode) return;
     sounds.playChip();
-    socket.emit('SIT_DOWN', {
-      roomCode,
-      seatNumber,
-      player
-    }, (res) => {
-      if (!res.success) {
-        setErrorMsg(res.error || 'Could not sit down');
-      }
-    });
+    if (socket && socket.connected && roomCode !== 'SANDBOX') {
+      socket.emit('SIT_DOWN', {
+        roomCode,
+        seatNumber,
+        player
+      }, (res) => {
+        if (!res?.success) {
+          setErrorMsg(res?.error || 'Could not sit down');
+        }
+      });
+    } else {
+      // Local sandbox sit
+      setTableState(prev => {
+        if (!prev) return prev;
+        const newSeats = [...prev.seats];
+        newSeats[seatNumber] = {
+          seatNumber,
+          player: {
+            id: player.id,
+            name: player.name,
+            team: player.team,
+            chips: prev.config?.startingStack || 2000,
+            buyIn: prev.config?.startingStack || 2000,
+            rebuys: 0,
+            timeBank: prev.config?.timeBankReserve || 30,
+            isSittingOut: false,
+            isTurn: false,
+            folded: false,
+            isAllIn: false,
+            streetBet: 0,
+            totalHandBet: 0,
+            holeCards: [{ rank: 'A', suit: 's' }, { rank: 'K', suit: 'd' }],
+            hasHoleCards: true,
+            isCardVisible: true
+          }
+        };
+        return { ...prev, seats: newSeats };
+      });
+    }
   };
 
   // Stand Up
   const handleStand = () => {
-    if (!socket || !roomCode) return;
-    socket.emit('STAND_UP', { roomCode, playerId: player.id });
+    if (socket && socket.connected && roomCode !== 'SANDBOX') {
+      socket.emit('STAND_UP', { roomCode, playerId: player.id });
+    } else {
+      setTableState(prev => {
+        if (!prev) return prev;
+        const newSeats = prev.seats.map(s => s.player?.id === player.id ? { seatNumber: s.seatNumber, player: null } : s);
+        return { ...prev, seats: newSeats };
+      });
+    }
   };
 
   // Player Poker Action
   const handleAction = (action, amount = 0) => {
-    if (!socket || !roomCode) return;
-    socket.emit('PLAYER_ACTION', {
-      roomCode,
-      playerId: player.id,
-      action,
-      amount
-    });
+    if (socket && socket.connected && roomCode !== 'SANDBOX') {
+      socket.emit('PLAYER_ACTION', {
+        roomCode,
+        playerId: player.id,
+        action,
+        amount
+      });
+    } else {
+      if (action === 'CHECK') sounds.playCheck();
+      else if (action === 'FOLD') sounds.playCard();
+      else sounds.playChip();
+    }
   };
 
   // Trigger Big Time
   const handleBigTime = () => {
-    if (!socket || !roomCode) return;
-    socket.emit('USE_BIG_TIME', { roomCode, playerId: player.id });
+    sounds.playBigTime();
+    if (socket && socket.connected && roomCode !== 'SANDBOX') {
+      socket.emit('USE_BIG_TIME', { roomCode, playerId: player.id });
+    }
   };
 
   // Rebuy chips
   const handleRebuy = (amount) => {
-    if (!socket || !roomCode) return;
     sounds.playChip();
-    socket.emit('REBUY', { roomCode, playerId: player.id, amount }, (res) => {
-      if (res.success) {
-        setIsLedgerOpen(false);
-      }
-    });
+    if (socket && socket.connected && roomCode !== 'SANDBOX') {
+      socket.emit('REBUY', { roomCode, playerId: player.id, amount }, (res) => {
+        if (res?.success) {
+          setIsLedgerOpen(false);
+        }
+      });
+    } else {
+      setIsLedgerOpen(false);
+      setTableState(prev => {
+        if (!prev) return prev;
+        const start = amount || prev.config?.startingStack || 2000;
+        const newSeats = prev.seats.map(s => {
+          if (s.player?.id === player.id) {
+            return {
+              ...s,
+              player: {
+                ...s.player,
+                chips: s.player.chips + start,
+                buyIn: s.player.buyIn + start,
+                rebuys: s.player.rebuys + 1
+              }
+            };
+          }
+          return s;
+        });
+        return { ...prev, seats: newSeats };
+      });
+    }
   };
+
 
   // Chat message send
   const handleSendMessage = (text, channel) => {

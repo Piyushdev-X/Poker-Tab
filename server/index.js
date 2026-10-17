@@ -12,15 +12,23 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
+}));
 app.use(express.json());
 
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
     origin: '*',
-    methods: ['GET', 'POST']
-  }
+    methods: ['GET', 'POST', 'OPTIONS'],
+    credentials: false
+  },
+  pingTimeout: 30000,
+  pingInterval: 15000,
+  transports: ['polling', 'websocket'],
+  allowEIO3: true
 });
 
 const roomManager = new RoomManager(io);
@@ -57,43 +65,86 @@ app.get('*', (req, res, next) => {
 
 // Socket.io Real-Time Event Handlers
 io.on('connection', (socket) => {
+  console.log(`[PokerTab Server] Client connected: ${socket.id}`);
   let currentRoomCode = null;
   let currentPlayerId = null;
 
-  // 1. Create Room
-  socket.on('CREATE_ROOM', ({ hostPlayer, config }, callback) => {
+  // 1. Create Room (supports both 'CREATE_ROOM' and 'create_room')
+  const handleCreateRoom = (data, callback) => {
     try {
+      const { hostPlayer, config } = data || {};
+      if (!hostPlayer || !hostPlayer.id) {
+        if (typeof callback === 'function') callback({ success: false, error: 'Invalid host player' });
+        return;
+      }
+
       const result = roomManager.createRoom(hostPlayer, config);
       if (result.success) {
         currentRoomCode = result.roomCode;
         currentPlayerId = hostPlayer.id;
         roomManager.joinRoom(result.roomCode, hostPlayer, socket);
-        callback({ success: true, roomCode: result.roomCode });
+
+        const room = roomManager.getRoom(result.roomCode);
+        const tableState = room ? (room.table.getStateForPlayer ? room.table.getStateForPlayer(hostPlayer.id) : null) : null;
+
+        if (typeof callback === 'function') {
+          callback({ success: true, roomCode: result.roomCode, tableState });
+        }
+        socket.emit('ROOM_CREATED', { roomCode: result.roomCode, tableState });
+        if (tableState) {
+          socket.emit('TABLE_STATE', tableState);
+        }
       } else {
-        callback({ success: false, error: result.error });
+        if (typeof callback === 'function') {
+          callback({ success: false, error: result.error });
+        }
       }
     } catch (err) {
       console.error('CREATE_ROOM error:', err);
-      callback({ success: false, error: err.message });
+      if (typeof callback === 'function') {
+        callback({ success: false, error: err.message });
+      }
     }
-  });
+  };
 
-  // 2. Join Room
-  socket.on('JOIN_ROOM', ({ roomCode, player }, callback) => {
+  socket.on('CREATE_ROOM', handleCreateRoom);
+  socket.on('create_room', handleCreateRoom);
+
+  // 2. Join Room (supports both 'JOIN_ROOM' and 'join_room')
+  const handleJoinRoom = (data, callback) => {
     try {
+      const { roomCode, player } = data || {};
       const room = roomManager.getRoom(roomCode);
       if (!room) {
-        return callback({ success: false, error: 'Room not found. Check the 6-character code.' });
+        if (typeof callback === 'function') {
+          return callback({ success: false, error: 'Room not found. Check the 6-character code.' });
+        }
+        return;
       }
       currentRoomCode = room.code;
-      currentPlayerId = player.id;
+      currentPlayerId = player?.id;
       const joinResult = roomManager.joinRoom(room.code, player, socket);
-      callback(joinResult);
+      const tableState = room.table.getStateForPlayer ? room.table.getStateForPlayer(player?.id) : null;
+
+      if (typeof callback === 'function') {
+        callback({ ...joinResult, tableState });
+      }
+      socket.emit('ROOM_JOINED', { ...joinResult, tableState });
+      if (tableState) {
+        socket.emit('TABLE_STATE', tableState);
+      }
     } catch (err) {
       console.error('JOIN_ROOM error:', err);
-      callback({ success: false, error: err.message });
+      if (typeof callback === 'function') {
+        callback({ success: false, error: err.message });
+      }
     }
-  });
+  };
+
+
+  socket.on('JOIN_ROOM', handleJoinRoom);
+  socket.on('join_room', handleJoinRoom);
+
 
   // 3. Sit Down
   socket.on('SIT_DOWN', ({ roomCode, seatNumber, player }, callback) => {

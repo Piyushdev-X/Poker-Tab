@@ -694,6 +694,11 @@ export class PokerTable {
     }, 6000);
   }
 
+  // Public state alias
+  getPublicState(playerId) {
+    return this.getStateForPlayer(playerId);
+  }
+
   // Sanitized state representation sent to clients
   getStateForPlayer(playerId) {
     const requestingPlayerSeat = this.getPlayer(playerId);

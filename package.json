@@ -4,6 +4,7 @@
   "description": "PokerTab — Production-Ready Real-Time Texas Hold'em Engine & Team Settlement Ledger",
   "private": true,
   "scripts": {
+    "dev": "concurrently -k -n \"server,client\" -c \"cyan,magenta\" \"node --watch server/index.js\" \"npm --prefix client run dev\"",
     "start": "node server/index.js",
     "server": "node --watch server/index.js",
     "client": "npm --prefix client run dev",
@@ -20,5 +21,8 @@
     "ledger"
   ],
   "author": "",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^10.0.6"
+  }
 }
