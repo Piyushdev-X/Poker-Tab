@@ -80,32 +80,42 @@ export default function PlayerSeat({
     return () => clearInterval(interval);
   }, [player?.isTurn, turnExpiresAt, turnDuration]);
 
-  // Empty Seat State: Compact square hardware pod that never squishes or wraps
+  // Fix 1: Sleek 46px circular micro-node on mobile (< md), full card on desktop (md:)
   if (!player) {
     return (
       <div className={`relative flex flex-col items-center justify-center shrink-0 whitespace-nowrap select-none ${className}`}>
         <button
           onClick={() => onSit(seat.seatNumber)}
-          className="group relative flex flex-col items-center justify-center w-[68px] h-[68px] sm:w-22 sm:h-22 md:w-24 md:h-24 rounded-2xl border-2 border-dashed border-[#B8A995] bg-[#FFFFFF] hover:bg-[#FFFFFF] hover:border-[#92400E] hover:scale-105 transition-all duration-150 cursor-pointer shadow-hardware-pod active:scale-[0.96] shrink-0 p-1"
+          className="group relative flex flex-col items-center justify-center w-11 h-11 md:w-20 md:h-20 rounded-full md:rounded-2xl bg-[#141210]/90 md:bg-[#FFFFFF] border border-[#C89D54]/80 md:border-2 md:border-dashed md:border-[#B8A995] text-[#FAF8F5] md:text-[#4A443E] shadow-md transition-transform active:scale-95 shrink-0 backdrop-blur-sm"
           title={`Sit down in Seat ${seat.seatNumber + 1}`}
         >
-          <div className="w-5 h-5 sm:w-7 sm:h-7 rounded-full bg-[#F7F4EE] group-hover:bg-[#FEF3C7] border border-[#D5CCC0] group-hover:border-[#F59E0B] flex items-center justify-center transition-colors mb-0.5 sm:mb-1 shrink-0">
-            <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#4A443E] group-hover:text-[#92400E] font-bold" />
+          {/* Mobile view (< md): 46px circular glass ring */}
+          <div className="flex flex-col items-center justify-center md:hidden leading-none">
+            <Plus className="w-3.5 h-3.5 text-[#C89D54]" />
+            <span className="text-[9px] font-mono font-bold text-[#E7E2D8] mt-0.5">
+              S{seat.seatNumber + 1}
+            </span>
           </div>
-          <span className="text-[9px] sm:text-[10px] font-mono font-black uppercase tracking-wider text-[#4A443E] group-hover:text-[#92400E] leading-tight">
-            SEAT {seat.seatNumber + 1}
-          </span>
-          <span className="text-[8px] font-mono text-[#6E645A] font-bold hidden sm:block leading-tight">
-            + SIT HERE
-          </span>
+
+          {/* Desktop view (md:): full tactile hardware pod */}
+          <div className="hidden md:flex flex-col items-center justify-center p-1">
+            <div className="w-6 h-6 rounded-full bg-[#F7F4EE] group-hover:bg-[#FEF3C7] border border-[#D5CCC0] group-hover:border-[#F59E0B] flex items-center justify-center transition-colors mb-1">
+              <Plus className="w-3.5 h-3.5 text-[#4A443E] group-hover:text-[#92400E] font-bold" />
+            </div>
+            <span className="text-[10px] font-mono font-black uppercase tracking-wider text-[#4A443E] group-hover:text-[#92400E] leading-tight">
+              SEAT {seat.seatNumber + 1}
+            </span>
+            <span className="text-[8px] font-mono text-[#6E645A] font-bold leading-tight">
+              + SIT HERE
+            </span>
+          </div>
         </button>
       </div>
     );
   }
 
-  // Animated turn timer geometry
-  const radius = 48;
-  const circumference = 2 * Math.PI * radius;
+  // SVG turn timer circumference
+  const circumference = 2 * Math.PI * 45; // percentage radius
   const strokeDashoffset = circumference - progress * circumference;
   const isUrgent = remainingSec <= 5 && player.isTurn;
 
@@ -117,98 +127,107 @@ export default function PlayerSeat({
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
-            className="w-4.5 h-4.5 sm:w-5.5 sm:h-5.5 rounded-full bg-[#FFFFFF] text-[#121110] border-2 border-[#F59E0B] font-black text-[9px] sm:text-[10px] font-mono flex items-center justify-center shadow-sm"
+            className="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-[#FFFFFF] text-[#121110] border-2 border-[#F59E0B] font-black text-[8px] sm:text-[9px] font-mono flex items-center justify-center shadow-sm"
             title="Dealer Button (D)"
           >
             D
           </motion.div>
         )}
         {isSB && (
-          <div className="w-4.5 h-4.5 sm:w-5 sm:h-5 rounded-full bg-[#FEF3C7] text-[#92400E] border border-[#F59E0B] font-black text-[7px] sm:text-[8px] font-mono flex items-center justify-center shadow-xs">
+          <div className="w-4 h-4 sm:w-4.5 sm:h-4.5 rounded-full bg-[#FEF3C7] text-[#92400E] border border-[#F59E0B] font-black text-[7px] font-mono flex items-center justify-center shadow-xs">
             SB
           </div>
         )}
         {isBB && (
-          <div className="w-4.5 h-4.5 sm:w-5 sm:h-5 rounded-full bg-[#DCFCE7] text-[#166534] border border-[#22C55E] font-black text-[7px] sm:text-[8px] font-mono flex items-center justify-center shadow-xs">
+          <div className="w-4 h-4 sm:w-4.5 sm:h-4.5 rounded-full bg-[#DCFCE7] text-[#166534] border border-[#22C55E] font-black text-[7px] font-mono flex items-center justify-center shadow-xs">
             BB
           </div>
         )}
       </div>
 
-      {/* Main Seat Bento Pod */}
-      <div className="relative w-[68px] h-[68px] sm:w-22 sm:h-22 md:w-24 md:h-24 flex items-center justify-center shrink-0">
-        {/* Animated SVG Turn Countdown Ring */}
-        {player.isTurn && (
-          <svg className="absolute inset-0 w-full h-full -rotate-90 pointer-events-none z-20">
-            <circle
-              cx="50%"
-              cy="50%"
-              r="44%"
-              stroke="rgba(213, 204, 192, 0.4)"
-              strokeWidth="3.5"
-              fill="transparent"
-            />
-            <circle
-              cx="50%"
-              cy="50%"
-              r="44%"
-              stroke={isUrgent ? '#DC2626' : '#F59E0B'}
-              strokeWidth="3.5"
-              fill="transparent"
-              strokeDasharray={circumference}
-              strokeDashoffset={strokeDashoffset}
-              strokeLinecap="round"
-              className="transition-all duration-75"
-            />
-          </svg>
-        )}
-
-        {/* Hardware Card Body */}
-        <div
-          className={`relative w-full h-full rounded-2xl border-2 flex flex-col items-center justify-center transition-all duration-200 shadow-hardware-pod overflow-hidden p-1 ${
-            player.folded
-              ? 'opacity-50 grayscale bg-[#EAE3D6] border-[#D5CCC0]'
-              : player.isTurn
-              ? isUrgent
-                ? 'bg-[#FEF2F2] border-[#DC2626] shadow-glow-bigtime animate-timer-warning'
-                : 'bg-[#FFFFFF] border-[#F59E0B] ring-2 ring-[#F59E0B]/50 shadow-glow-active'
-              : `bg-[#FFFFFF] ${team.border}`
-          } ${isMe ? 'ring-2 ring-[#92400E]' : ''}`}
-        >
-          {/* Team Monogram Header */}
-          <div className="flex items-center gap-1 mb-0.5">
-            <span className={`text-[6px] sm:text-[7px] font-mono font-black uppercase tracking-wider px-1 py-0.1 rounded-full border ${team.badge}`}>
-              {team.name}
-            </span>
-          </div>
-
-          {/* Player Name */}
-          <span className="text-[10px] sm:text-xs font-black text-[#121110] truncate max-w-[56px] sm:max-w-[74px] px-0.5 text-center leading-tight">
-            {player.name} {isMe && <span className="text-[7px] sm:text-[8px] text-[#92400E] font-bold">(You)</span>}
-          </span>
-
-          {/* Chip Stack (High-Contrast Bold Tabular Monospace) */}
-          <div className="flex items-center gap-0.5 sm:gap-1 mt-0.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#F59E0B]" />
-            <span className="tabular-nums font-mono font-black text-[10px] sm:text-xs text-[#121110]">
-              {player.chips.toLocaleString()}
-            </span>
-          </div>
-
-          {/* Floating seconds remaining when active */}
+      {/* Main Seat Avatar Body */}
+      <div className="relative flex flex-col items-center shrink-0">
+        {/* 48px Circular Avatar on Mobile, 80px Card on Desktop */}
+        <div className="relative w-12 h-12 md:w-20 md:h-20 flex items-center justify-center">
+          {/* Animated SVG Turn Countdown Ring */}
           {player.isTurn && (
-            <div className={`absolute bottom-0.5 px-1.5 py-0.2 rounded text-[7px] sm:text-[8px] font-mono font-black tracking-wider ${
-              isUrgent ? 'bg-[#DC2626] text-white animate-pulse' : 'bg-[#92400E] text-white'
-            }`}>
-              {remainingSec}s
-            </div>
+            <svg className="absolute inset-0 w-full h-full -rotate-90 pointer-events-none z-20">
+              <circle
+                cx="50%"
+                cy="50%"
+                r="45%"
+                stroke="rgba(213, 204, 192, 0.4)"
+                strokeWidth="3.5"
+                fill="transparent"
+              />
+              <circle
+                cx="50%"
+                cy="50%"
+                r="45%"
+                stroke={isUrgent ? '#DC2626' : '#F59E0B'}
+                strokeWidth="3.5"
+                fill="transparent"
+                strokeDasharray={circumference}
+                strokeDashoffset={strokeDashoffset}
+                strokeLinecap="round"
+                className="transition-all duration-75"
+              />
+            </svg>
           )}
+
+          {/* Seat Avatar Node */}
+          <div
+            className={`relative w-full h-full rounded-full md:rounded-2xl border-2 flex flex-col items-center justify-center transition-all duration-200 shadow-hardware-pod overflow-hidden ${
+              player.folded
+                ? 'opacity-50 grayscale bg-[#EAE3D6] border-[#D5CCC0]'
+                : player.isTurn
+                ? isUrgent
+                  ? 'bg-[#FEF2F2] border-[#DC2626] shadow-glow-bigtime animate-timer-warning'
+                  : 'bg-[#FFFFFF] border-[#F59E0B] ring-2 ring-[#F59E0B]/50 shadow-glow-active'
+                : `bg-[#FFFFFF] ${team.border}`
+            } ${isMe ? 'ring-2 ring-[#92400E]' : ''}`}
+          >
+            {/* Team Monogram Header */}
+            <span className={`text-[6px] md:text-[8px] font-mono font-black uppercase tracking-wider px-1 py-0.2 rounded-full border ${team.badge}`}>
+              {team.name[0]}<span className="hidden md:inline">{team.name.slice(1)}</span>
+            </span>
+
+            {/* Desktop Only: Name & Chips Inside Box */}
+            <span className="hidden md:block text-xs font-black text-[#121110] truncate max-w-[70px] px-1 text-center leading-tight mt-0.5">
+              {player.name} {isMe && <span className="text-[8px] text-[#92400E] font-bold">(You)</span>}
+            </span>
+            <div className="hidden md:flex items-center gap-1 mt-0.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#F59E0B]" />
+              <span className="tabular-nums font-mono font-black text-xs text-[#121110]">
+                {player.chips.toLocaleString()}
+              </span>
+            </div>
+
+            {/* Turn timer floating countdown */}
+            {player.isTurn && (
+              <div className={`absolute bottom-0.5 px-1 py-0.1 rounded text-[7px] font-mono font-black ${
+                isUrgent ? 'bg-[#DC2626] text-white animate-pulse' : 'bg-[#92400E] text-white'
+              }`}>
+                {remainingSec}s
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Mobile Occupied Seat Pill: overlaps bottom edge of avatar (-mt-2) */}
+        <div className="md:hidden -mt-2 px-1.5 py-0.5 rounded-full bg-[#141210] text-[#FAF8F5] border border-[#C89D54] shadow-md min-w-[64px] max-w-[80px] text-center z-20 flex flex-col items-center leading-none">
+          <span className="text-[9px] font-semibold text-[#FAF8F5] truncate w-full px-0.5">
+            {player.name}
+          </span>
+          <span className="text-[10px] font-mono font-bold text-[#FDE68A] tabular-nums mt-0.5">
+            {player.chips.toLocaleString()}
+          </span>
         </div>
 
         {/* Time Bank Pill */}
         {player.timeBank > 0 && !player.folded && (
           <div
-            className="absolute -bottom-2 px-1.5 py-0.2 rounded-full bg-[#FFFFFF] border border-[#D5CCC0] text-[7px] sm:text-[8px] font-mono font-bold text-[#6B21A8] flex items-center gap-0.5 z-30 shadow-xs"
+            className="absolute -bottom-3 px-1.5 py-0.2 rounded-full bg-[#FFFFFF] border border-[#D5CCC0] text-[7px] font-mono font-bold text-[#6B21A8] flex items-center gap-0.5 z-30 shadow-xs"
             title={`Time Bank Reserve: +${player.timeBank}s`}
           >
             <Clock className="w-2.5 h-2.5 text-[#6B21A8]" />
@@ -219,7 +238,7 @@ export default function PlayerSeat({
 
       {/* Hole Cards Peeking Out Above Pod */}
       {player.hasHoleCards && !player.folded && (
-        <div className="absolute -top-6 sm:-top-7 flex items-center -space-x-3 sm:-space-x-3.5 z-20">
+        <div className="absolute -top-5 sm:-top-7 flex items-center -space-x-3 sm:-space-x-3.5 z-20">
           {player.isCardVisible && player.holeCards ? (
             player.holeCards.map((card, i) => (
               <PlayingCard
