@@ -274,3 +274,34 @@ export class RoomManager {
     return transfers;
   }
 }
+
+/**
+ * Anti-cheat state sanitization helper:
+ * Masks private opponent cards to [{ hidden: true }, { hidden: true }] until SHOWDOWN.
+ */
+export function sanitizeRoomForPlayer(room, viewerPlayerId) {
+  if (!room) return null;
+  const tableState = room.table ? room.table.getStateForPlayer(viewerPlayerId) : null;
+  const isShowdown = room.table ? (room.table.status === 'SHOWDOWN') : false;
+
+  const sanitizedPlayers = [];
+  if (room.players) {
+    for (const [pid, p] of room.players) {
+      const isViewer = pid === viewerPlayerId;
+      const cards = (isViewer || isShowdown) ? (p.cards || null) : [{ hidden: true }, { hidden: true }];
+      sanitizedPlayers.push({
+        ...p,
+        cards: p.cards ? cards : undefined
+      });
+    }
+  }
+
+  return {
+    ...tableState,
+    roomCode: room.code,
+    hostId: room.hostId,
+    players: sanitizedPlayers,
+    phase: room.table?.status || 'WAITING'
+  };
+}
+

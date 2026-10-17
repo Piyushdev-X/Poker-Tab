@@ -704,6 +704,8 @@ export class PokerTable {
     const requestingPlayerSeat = this.getPlayer(playerId);
     const requestingPlayer = requestingPlayerSeat ? requestingPlayerSeat.player : null;
     const requestingTeam = requestingPlayer ? requestingPlayer.team : null;
+    const requestingHp = requestingPlayer ? this.handPlayers.get(requestingPlayer.id) : null;
+    const isRequestingPlayerFolded = requestingHp ? requestingHp.folded : false;
 
     // Build seats data
     const sanitizedSeats = this.seats.map(s => {
@@ -713,25 +715,39 @@ export class PokerTable {
       let holeCards = null;
       let isVisible = false;
 
-      if (hp) {
-        // Own hole cards are always visible
+      if (hp && hp.holeCards && hp.holeCards.length === 2) {
+        // Condition 1: Hero's own seat - hole cards are private to Hero
         if (s.player.id === playerId) {
           holeCards = hp.holeCards;
           isVisible = true;
-        } else if (this.status === 'SHOWDOWN' && !hp.folded) {
-          // At showdown, reveal all active cards
+        } 
+        // Condition 2: Showdown - reveal cards of all active, non-folded players
+        else if (this.status === 'SHOWDOWN' && !hp.folded) {
           holeCards = hp.holeCards;
           isVisible = true;
-        } else if (
+        } 
+        // Condition 3: Teammate Sweat Mode (Strict Exception)
+        // a player can only peek at a teammate's cards AFTER the player themselves has folded,
+        // and never an opponent team's cards.
+        else if (
           this.config.teamMode &&
           this.config.teammateSweatMode &&
+          isRequestingPlayerFolded &&
           requestingTeam &&
           s.player.team === requestingTeam &&
           s.player.team !== 'NONE'
         ) {
-          // Teammate sweat mode: teammates can ghost-view hole cards
           holeCards = hp.holeCards;
           isVisible = true;
+        } 
+        // In ALL other cases: Opponents who have cards and haven't folded receive masked card backs
+        else {
+          if (!hp.folded) {
+            holeCards = [{ hidden: true }, { hidden: true }];
+          } else {
+            holeCards = null;
+          }
+          isVisible = false;
         }
       }
 
@@ -752,7 +768,8 @@ export class PokerTable {
           streetBet: hp ? hp.streetBet : 0,
           totalHandBet: hp ? hp.totalHandBet : 0,
           holeCards,
-          hasHoleCards: hp && hp.holeCards && hp.holeCards.length === 2,
+          cards: holeCards,
+          hasHoleCards: Boolean(hp && hp.holeCards && hp.holeCards.length === 2 && !hp.folded),
           isCardVisible: isVisible
         }
       };
@@ -788,6 +805,7 @@ export class PokerTable {
       roomId: this.roomId,
       config: this.config,
       status: this.status,
+      phase: this.status,
       communityCards: this.communityCards,
       pot: this.pot,
       currentBet: this.currentBet,

@@ -1,5 +1,4 @@
-// client/src/components/PokerTable.jsx
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
 import { Play, UserPlus, Bot } from 'lucide-react';
@@ -18,8 +17,11 @@ export default function PokerTable({
 }) {
   if (!tableState) return null;
 
+  const [heroPrivacyHidden, setHeroPrivacyHidden] = useState(false);
   const maxSeats = tableState.config?.maxSeats || 6;
   const seats = tableState.seats || [];
+  const heroSeat = seats.find(s => s.player?.id === myPlayerId);
+  const heroPlayer = heroSeat?.player || null;
   const communityCards = tableState.communityCards || [];
   const pot = tableState.pot || 0;
   const lastShowdown = tableState.lastShowdown;
@@ -171,6 +173,9 @@ export default function PokerTable({
               <PlayerSeat
                 seat={seat}
                 isMe={isMe}
+                currentPlayerId={myPlayerId}
+                heroPlayer={heroPlayer}
+                tableState={tableState}
                 isDealer={isDealer}
                 isSB={isSB}
                 isBB={isBB}
@@ -179,6 +184,8 @@ export default function PokerTable({
                 winningCards={winningCards}
                 onSit={onSit}
                 onStand={onStand}
+                isHeroPrivacyHidden={heroPrivacyHidden}
+                onToggleHeroPrivacy={() => setHeroPrivacyHidden(prev => !prev)}
               />
             </div>
           );

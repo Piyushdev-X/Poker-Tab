@@ -473,7 +473,7 @@ export default function App() {
             isAllIn: false,
             streetBet: 0,
             totalHandBet: 0,
-            holeCards: ['Ks', 'Qh'],
+            holeCards: [{ hidden: true }, { hidden: true }],
             hasHoleCards: true,
             isCardVisible: false
           }
@@ -512,7 +512,7 @@ export default function App() {
             folded: false,
             isAllIn: false,
             isTurn: isMySeat,
-            holeCards: isMySeat ? ['As', 'Kh'] : [randomCard(), randomCard()],
+            holeCards: isMySeat ? ['As', 'Kh'] : [{ hidden: true }, { hidden: true }],
             hasHoleCards: true,
             isCardVisible: isMySeat
           }

@@ -1,7 +1,7 @@
 // client/src/components/PlayerSeat.jsx
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Clock, Plus } from 'lucide-react';
+import { Clock, Plus, Eye, EyeOff } from 'lucide-react';
 import PlayingCard from './PlayingCard';
 
 // High-contrast, WCAG AAA Team Semantic Colors
@@ -51,13 +51,52 @@ export default function PlayerSeat({
   winningCards = [],
   onSit,
   onStand,
-  className = ''
+  className = '',
+  // Strict Visibility & Anti-Cheat props
+  tableState = null,
+  heroPlayer = null,
+  currentPlayerId = null,
+  isHeroPrivacyHidden = false,
+  onToggleHeroPrivacy = null
 }) {
   const [progress, setProgress] = useState(1);
   const [remainingSec, setRemainingSec] = useState(0);
+  const [localHeroPrivacy, setLocalHeroPrivacy] = useState(false);
 
   const player = seat.player;
   const team = player ? TEAM_CONFIG[player.team] || TEAM_CONFIG.NONE : null;
+
+  // Strict Hole Card Visibility Rule:
+  // Render FACE-UP ONLY IF:
+  // 1. Hero's own seat: isMe or player.id === currentPlayerId
+  // 2. Showdown: phase === 'SHOWDOWN' and player has not folded
+  // 3. Teammate Sweat Mode: teammateSweatMode === true AND heroPlayer.folded === true AND heroPlayer.team === player.team
+  const currentPhase = tableState?.phase || tableState?.status || '';
+  const isShowdown = currentPhase === 'SHOWDOWN';
+  const teammateSweatActive = Boolean(
+    tableState?.config?.teammateSweatMode &&
+    heroPlayer?.folded === true &&
+    heroPlayer?.team &&
+    heroPlayer?.team !== 'NONE' &&
+    player?.team === heroPlayer?.team
+  );
+
+  const isEligibleForFaceUp = Boolean(
+    player &&
+    !player.folded &&
+    (isMe || (isShowdown && !player.folded) || teammateSweatActive)
+  );
+
+  // Hero Privacy Toggle state (tap/hold eye to hide/peek cards)
+  const isConcealedByHero = isMe && (isHeroPrivacyHidden || localHeroPrivacy);
+  const shouldRenderFaceUp = isEligibleForFaceUp && !isConcealedByHero;
+
+  // Determine if player has dealt hole cards
+  const hasHoleCards = Boolean(
+    player &&
+    !player.folded &&
+    (player.hasHoleCards || (player.holeCards && player.holeCards.length > 0))
+  );
 
   // Turn timer countdown ring calculation
   useEffect(() => {
@@ -237,12 +276,12 @@ export default function PlayerSeat({
       </div>
 
       {/* Hole Cards Peeking Out Above Pod */}
-      {player.hasHoleCards && !player.folded && (
+      {hasHoleCards && (
         <div className="absolute -top-5 sm:-top-7 flex items-center -space-x-3 sm:-space-x-3.5 z-20">
-          {player.isCardVisible && player.holeCards ? (
+          {shouldRenderFaceUp && player.holeCards && Array.isArray(player.holeCards) ? (
             player.holeCards.map((card, i) => (
               <PlayingCard
-                key={`${card}-${i}`}
+                key={`${typeof card === 'string' ? card : (card.rank || '') + (card.suit || '')}-${i}`}
                 card={card}
                 size="sm"
                 isWinning={winningCards.includes(card)}
@@ -255,6 +294,30 @@ export default function PlayerSeat({
               <PlayingCard isFaceDown size="sm" delay={0} />
               <PlayingCard isFaceDown size="sm" delay={0.08} />
             </>
+          )}
+
+          {/* Hero IRL Privacy Toggle: Tap/Hold eye icon to conceal or peek hole cards */}
+          {isMe && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                if (onToggleHeroPrivacy) {
+                  onToggleHeroPrivacy();
+                } else {
+                  setLocalHeroPrivacy(prev => !prev);
+                }
+              }}
+              className="ml-2.5 p-1 rounded-full bg-[#141210]/90 hover:bg-[#141210] text-[#FAF8F5] border border-[#C89D54]/70 shadow-md transition-all active:scale-90 cursor-pointer flex items-center justify-center z-30"
+              title={isConcealedByHero ? "Tap to Peek Hole Cards" : "Tap to Conceal Hole Cards (IRL Privacy)"}
+              aria-label={isConcealedByHero ? "Reveal hole cards" : "Conceal hole cards"}
+            >
+              {isConcealedByHero ? (
+                <EyeOff className="w-3 h-3 text-[#E2D8CC]" />
+              ) : (
+                <Eye className="w-3 h-3 text-[#F59E0B]" />
+              )}
+            </button>
           )}
         </div>
       )}

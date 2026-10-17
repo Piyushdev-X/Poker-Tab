@@ -18,7 +18,7 @@ const SUIT_COLORS = {
 };
 
 export default function PlayingCard({
-  card, // e.g. 'Ah', 'Ts' or null for face-down card
+  card, // e.g. 'Ah', 'Ts', { rank: 'A', suit: 's' } or { hidden: true } / null for face-down card
   isFaceDown = false,
   isWinning = false,
   isDimmed = false,
@@ -27,7 +27,9 @@ export default function PlayingCard({
   className = '',
   delay = 0
 }) {
-  if (isFaceDown || !card) {
+  const isHidden = isFaceDown || !card || card?.hidden || (typeof card === 'object' && !card.rank && !card.suit);
+
+  if (isHidden) {
     const sizeClasses = {
       sm: 'w-7 h-10 md:w-8 md:h-12 rounded',
       md: 'w-10 h-15 sm:w-12 sm:h-18 rounded-md',
@@ -61,8 +63,9 @@ export default function PlayingCard({
     );
   }
 
-  const rank = card[0];
-  const suit = card[1]?.toLowerCase() || 's';
+  const rank = typeof card === 'string' ? card[0] : (card.rank || card.value || '?');
+  const rawSuit = typeof card === 'string' ? card[1] : (card.suit || 's');
+  const suit = rawSuit?.toLowerCase() || 's';
   const color = SUIT_COLORS[suit] || '#111827';
   const symbol = SUIT_SYMBOLS[suit] || '♠';
 

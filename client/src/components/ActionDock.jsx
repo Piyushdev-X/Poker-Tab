@@ -1,7 +1,7 @@
 // client/src/components/ActionDock.jsx
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Flame, Clock, Minus, Plus, Zap, AlertCircle } from 'lucide-react';
+import { Flame, Clock, Minus, Plus, Zap, AlertCircle, Eye, EyeOff } from 'lucide-react';
 import PlayingCard from './PlayingCard';
 import { sounds } from '../audio';
 
@@ -69,17 +69,19 @@ export default function ActionDock({
     onBigTime();
   };
 
+  const [isPeekHidden, setIsPeekHidden] = useState(false);
+
   return (
     <div className="fixed bottom-2 sm:bottom-3 left-1/2 -translate-x-1/2 w-full max-w-4xl px-2 sm:px-4 z-40 pb-safe select-none">
       <div className="relative bg-[#FFFFFF]/98 backdrop-blur-xl border-2 border-[#D5CCC0] rounded-2xl p-3 sm:p-4 shadow-hardware-pod flex flex-col md:flex-row items-center justify-between gap-3 sm:gap-4">
         
         {/* Left Section: Hole Cards & Live Hand Telemetry */}
         <div className="flex items-center gap-3 sm:gap-4 w-full md:w-auto justify-between md:justify-start">
-          <div className="flex items-center -space-x-3 sm:-space-x-4">
-            {myPlayer.holeCards && myPlayer.holeCards.length === 2 ? (
+          <div className="flex items-center -space-x-3 sm:-space-x-4 relative">
+            {!isPeekHidden && myPlayer.holeCards && myPlayer.holeCards.length === 2 ? (
               myPlayer.holeCards.map((c, i) => (
                 <PlayingCard
-                  key={`${c}-${i}`}
+                  key={`${typeof c === 'string' ? c : (c.rank || '') + (c.suit || '')}-${i}`}
                   card={c}
                   size="md"
                   isWinning={tableState.lastShowdown?.winningCards?.includes(c)}
@@ -92,6 +94,21 @@ export default function ActionDock({
                 <PlayingCard isFaceDown size="md" delay={0.05} />
               </>
             )}
+
+            {/* Privacy Peek Toggle */}
+            <button
+              type="button"
+              onClick={() => setIsPeekHidden(prev => !prev)}
+              className="ml-2 p-1.5 rounded-full bg-[#141210]/90 hover:bg-[#141210] text-[#FAF8F5] border border-[#C89D54]/70 shadow-xs transition-transform active:scale-90 cursor-pointer flex items-center justify-center shrink-0 z-10"
+              title={isPeekHidden ? "Tap to Peek Hole Cards" : "Tap to Conceal Hole Cards (IRL Privacy)"}
+              aria-label={isPeekHidden ? "Reveal hole cards" : "Conceal hole cards"}
+            >
+              {isPeekHidden ? (
+                <EyeOff className="w-3.5 h-3.5 text-[#E2D8CC]" />
+              ) : (
+                <Eye className="w-3.5 h-3.5 text-[#F59E0B]" />
+              )}
+            </button>
           </div>
 
           {/* Telemetry info block */}
