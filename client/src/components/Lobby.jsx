@@ -1,29 +1,29 @@
 // client/src/components/Lobby.jsx
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Shield, Users, Clock, Flame, Zap, ArrowRight, Play, PlusCircle, Check, RefreshCw } from 'lucide-react';
+import { Shield, Users, Clock, Flame, Zap, ArrowRight, Play, RefreshCw } from 'lucide-react';
 
 const TEAMS = [
   {
     id: 'ALPHA',
     name: 'Team Alpha',
-    accent: 'border-amber-500/50 text-amber-400 bg-amber-500/10',
-    dot: 'bg-amber-400',
-    desc: 'Imperial Gold'
+    accent: 'border-[#F2D08B] text-[#9E7223] bg-[#FDF3D7]',
+    dot: 'bg-[#F5C76B]',
+    desc: 'Buttercup Apricot'
   },
   {
     id: 'OMEGA',
     name: 'Team Omega',
-    accent: 'border-sky-500/50 text-sky-400 bg-sky-500/10',
-    dot: 'bg-sky-400',
-    desc: 'Cobalt Ice'
+    accent: 'border-[#B3D1F0] text-[#36638F] bg-[#E6F0FA]',
+    dot: 'bg-[#89B9E8]',
+    desc: 'Periwinkle Sky'
   },
   {
     id: 'SIGMA',
     name: 'Team Sigma',
-    accent: 'border-purple-500/50 text-purple-400 bg-purple-500/10',
-    dot: 'bg-purple-400',
-    desc: 'Titanium Amethyst'
+    accent: 'border-[#D9BBE6] text-[#6E4482] bg-[#F3E8F7]',
+    dot: 'bg-[#C499D9]',
+    desc: 'Lavender Lilac'
   }
 ];
 
@@ -110,33 +110,33 @@ export default function Lobby({
   };
 
   return (
-    <div className="relative min-h-screen w-full bg-obsidian flex flex-col items-center justify-center p-4 md:p-8 select-none">
-      {/* Background Ambient Vignette */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(197,160,89,0.06),transparent_60%)] pointer-events-none" />
+    <div className="relative min-h-screen w-full flex flex-col items-center justify-center p-3 sm:p-6 md:p-8 select-none">
+      {/* Background Subtle Paper / Warm Noise Vignette */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_35%,rgba(216,199,178,0.35),transparent_65%)] pointer-events-none" />
 
-      {/* Main Container Card */}
+      {/* Main Container Card: Creamy Parchment */}
       <motion.div
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-        className="relative w-full max-w-xl bg-obsidian-surface border border-white/10 rounded-3xl p-6 md:p-8 shadow-2xl overflow-hidden"
+        className="relative w-full max-w-lg bg-[#FAF7F2]/95 backdrop-blur-xl border border-[#E2D9C8] rounded-3xl p-5 sm:p-7 md:p-8 shadow-clay-ambient overflow-hidden"
       >
         {/* Card Header Brand */}
-        <div className="flex flex-col items-center text-center mb-6">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-brass to-brass-dark flex items-center justify-center text-obsidian text-2xl font-bold mb-3 shadow-glow-active">
+        <div className="flex flex-col items-center text-center mb-5 sm:mb-6">
+          <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-[#EAE2D3] border border-[#DCD2C0] flex items-center justify-center text-[#8C4A1D] text-xl sm:text-2xl font-bold mb-2.5 shadow-card-tactile">
             ♠
           </div>
-          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-slate-100 font-display">
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#2C2623] font-display">
             PokerTab
           </h1>
-          <p className="text-xs md:text-sm font-mono text-slate-400 mt-1">
-            Real-Time Tabletop Engine & Team Settlement Ledger
+          <p className="text-xs sm:text-sm font-mono text-[#6E6259] mt-0.5">
+            Warm Editorial Tabletop & Team Settlement Ledger
           </p>
 
           {/* Connection status badge */}
-          <div className="mt-2.5 flex items-center gap-1.5">
-            <span className={`w-2 h-2 rounded-full ${isConnected ? 'bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.6)]' : 'bg-amber-400 animate-pulse'}`} />
-            <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400">
+          <div className="mt-2 flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#EAE2D3]/60 border border-[#DCD2C0]">
+            <span className={`w-2 h-2 rounded-full ${isConnected ? 'bg-[#5E9472]' : 'bg-[#D96B6B] animate-pulse'}`} />
+            <span className="text-[10px] font-mono uppercase tracking-wider text-[#6E6259]">
               {isConnected ? 'Engine Online' : 'Connecting Engine...'}
             </span>
           </div>
@@ -144,13 +144,13 @@ export default function Lobby({
 
         {/* Error Alert if any */}
         {(errorMessage || nameError) && (
-          <div className="mb-4 p-3 rounded-xl bg-red-950/40 border border-red-500/40 text-red-300 text-xs font-mono flex items-center justify-between">
+          <div className="mb-4 p-3 rounded-xl bg-[#FDF2F2] border border-[#DFAFAF] text-[#8C3B3B] text-xs font-mono flex items-center justify-between">
             <span>{errorMessage || nameError}</span>
             {nameError && (
               <button
                 type="button"
                 onClick={() => setNameError('')}
-                className="text-red-400 hover:text-red-200 ml-2"
+                className="text-[#8C3B3B] hover:text-[#2C2623] ml-2 cursor-pointer font-bold"
               >
                 ✕
               </button>
@@ -159,14 +159,14 @@ export default function Lobby({
         )}
 
         {/* Toggle Mode: Create Room vs Join Code */}
-        <div className="flex items-center gap-1 bg-obsidian-deep/80 p-1 rounded-2xl border border-white/5 mb-6">
+        <div className="flex items-center gap-1 bg-[#EAE2D3]/70 p-1 rounded-2xl border border-[#DCD2C0] mb-5">
           <button
             type="button"
             onClick={() => { setTab('CREATE'); setNameError(''); }}
             className={`flex-1 py-2 text-xs font-mono uppercase tracking-wider font-bold rounded-xl transition-all cursor-pointer ${
               tab === 'CREATE'
-                ? 'bg-brass text-obsidian shadow-md'
-                : 'text-slate-400 hover:text-white'
+                ? 'bg-[#FAF7F2] text-[#2C2623] shadow-card-tactile border border-[#E2D9C8]'
+                : 'text-[#6E6259] hover:text-[#2C2623]'
             }`}
           >
             Create Table
@@ -176,24 +176,24 @@ export default function Lobby({
             onClick={() => { setTab('JOIN'); setNameError(''); }}
             className={`flex-1 py-2 text-xs font-mono uppercase tracking-wider font-bold rounded-xl transition-all cursor-pointer ${
               tab === 'JOIN'
-                ? 'bg-brass text-obsidian shadow-md'
-                : 'text-slate-400 hover:text-white'
+                ? 'bg-[#FAF7F2] text-[#2C2623] shadow-card-tactile border border-[#E2D9C8]'
+                : 'text-[#6E6259] hover:text-[#2C2623]'
             }`}
           >
             Join with Code
           </button>
         </div>
 
-        {/* Player Name Input (with iOS friendly touch controls) */}
-        <div className="mb-5">
+        {/* Player Name Input */}
+        <div className="mb-4">
           <div className="flex items-center justify-between mb-1.5">
-            <label htmlFor="player-handle-input" className="block text-[11px] font-mono uppercase tracking-wider text-slate-400 font-bold">
+            <label htmlFor="player-handle-input" className="block text-[11px] font-mono uppercase tracking-wider text-[#6E6259] font-bold">
               Player Handle / Nickname
             </label>
             <button
               type="button"
               onClick={handleRandomizeName}
-              className="text-[10px] font-mono text-brass hover:text-brass-light flex items-center gap-1 cursor-pointer transition-colors"
+              className="text-[10px] font-mono text-[#8C4A1D] hover:text-[#2C2623] flex items-center gap-1 cursor-pointer transition-colors font-bold"
             >
               <RefreshCw className="w-3 h-3" />
               <span>Randomize</span>
@@ -213,29 +213,29 @@ export default function Lobby({
               setPlayerName(e.target.value);
               if (nameError) setNameError('');
             }}
-            className={`w-full bg-obsidian-deep border rounded-xl px-4 py-3 text-sm font-mono text-slate-100 placeholder:text-slate-600 focus:outline-none transition-colors ${
-              nameError ? 'border-red-500/80 ring-1 ring-red-500/30' : 'border-white/10 focus:border-brass/60'
+            className={`w-full bg-[#EAE2D3]/50 border rounded-xl px-4 py-2.5 sm:py-3 text-sm font-mono text-[#2C2623] placeholder:text-[#9A8E84] focus:outline-none transition-colors ${
+              nameError ? 'border-[#D96B6B] ring-1 ring-[#D96B6B]/40' : 'border-[#DCD2C0] focus:border-[#8C4A1D]'
             }`}
           />
         </div>
 
         {/* Team Selection Section */}
-        <div className="mb-6">
+        <div className="mb-5">
           <div className="flex items-center justify-between mb-2">
-            <label className="text-[11px] font-mono uppercase tracking-wider text-slate-400 font-bold">
+            <label className="text-[11px] font-mono uppercase tracking-wider text-[#6E6259] font-bold">
               Team Affiliation
             </label>
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-mono text-slate-500">Team Play</span>
+              <span className="text-[10px] font-mono text-[#9A8E84]">Team Play</span>
               <button
                 type="button"
                 onClick={() => setTeamMode(!teamMode)}
                 className={`w-9 h-5 rounded-full p-0.5 transition-colors cursor-pointer ${
-                  teamMode ? 'bg-brass' : 'bg-slate-800'
+                  teamMode ? 'bg-[#9E7223]' : 'bg-[#DCD2C0]'
                 }`}
               >
                 <div
-                  className={`w-4 h-4 rounded-full bg-obsidian transition-transform ${
+                  className={`w-4 h-4 rounded-full bg-[#FAF7F2] shadow-xs transition-transform ${
                     teamMode ? 'translate-x-4' : 'translate-x-0'
                   }`}
                 />
@@ -252,17 +252,17 @@ export default function Lobby({
                     type="button"
                     key={t.id}
                     onClick={() => setSelectedTeam(t.id)}
-                    className={`p-3 rounded-xl border flex flex-col items-center justify-center transition-all cursor-pointer active:scale-[0.97] touch-manipulation ${
+                    className={`p-2.5 sm:p-3 rounded-xl border flex flex-col items-center justify-center transition-all cursor-pointer active:scale-[0.97] touch-manipulation ${
                       isSelected
-                        ? `${t.accent} shadow-md ring-1 ring-white/20`
-                        : 'border-white/5 bg-obsidian-deep hover:bg-white/5 text-slate-400'
+                        ? `${t.accent} shadow-card-tactile ring-2 ring-white/80`
+                        : 'border-[#E2D9C8] bg-[#FAF7F2] hover:bg-white text-[#6E6259]'
                     }`}
                   >
-                    <div className="flex items-center gap-1.5 mb-1">
+                    <div className="flex items-center gap-1.5 mb-0.5">
                       <span className={`w-2 h-2 rounded-full ${t.dot}`} />
                       <span className="text-xs font-mono font-bold">{t.name.replace('Team ', '')}</span>
                     </div>
-                    <span className="text-[9px] font-mono opacity-70">{t.desc}</span>
+                    <span className="text-[9px] font-mono opacity-80">{t.desc}</span>
                   </button>
                 );
               })}
@@ -274,16 +274,16 @@ export default function Lobby({
         {tab === 'CREATE' ? (
           <form onSubmit={handleCreate} className="space-y-4">
             {/* Table Settings Grid */}
-            <div className="grid grid-cols-2 gap-3 p-4 rounded-2xl bg-obsidian-deep/80 border border-white/5">
+            <div className="grid grid-cols-2 gap-2.5 sm:gap-3 p-3 sm:p-4 rounded-2xl bg-[#EAE2D3]/50 border border-[#DCD2C0]">
               {/* Starting Stack */}
               <div>
-                <label className="text-[10px] font-mono uppercase text-slate-400 block mb-1">
+                <label className="text-[10px] font-mono uppercase text-[#6E6259] block mb-1">
                   Starting Stack
                 </label>
                 <select
                   value={startingStack}
                   onChange={(e) => setStartingStack(parseInt(e.target.value))}
-                  className="w-full bg-obsidian-surface border border-white/10 rounded-lg px-2.5 py-1.5 text-xs font-mono text-slate-200 focus:outline-none focus:border-brass cursor-pointer"
+                  className="w-full bg-[#FAF7F2] border border-[#DCD2C0] rounded-lg px-2.5 py-1.5 text-xs font-mono text-[#2C2623] focus:outline-none focus:border-[#8C4A1D] cursor-pointer"
                 >
                   <option value={1000}>1,000 chips</option>
                   <option value={2000}>2,000 chips (Standard)</option>
@@ -294,7 +294,7 @@ export default function Lobby({
 
               {/* Blinds */}
               <div>
-                <label className="text-[10px] font-mono uppercase text-slate-400 block mb-1">
+                <label className="text-[10px] font-mono uppercase text-[#6E6259] block mb-1">
                   Blinds (SB / BB)
                 </label>
                 <select
@@ -304,7 +304,7 @@ export default function Lobby({
                     setSmallBlind(sb);
                     setBigBlind(bb);
                   }}
-                  className="w-full bg-obsidian-surface border border-white/10 rounded-lg px-2.5 py-1.5 text-xs font-mono text-slate-200 focus:outline-none focus:border-brass cursor-pointer"
+                  className="w-full bg-[#FAF7F2] border border-[#DCD2C0] rounded-lg px-2.5 py-1.5 text-xs font-mono text-[#2C2623] focus:outline-none focus:border-[#8C4A1D] cursor-pointer"
                 >
                   <option value="5/10">5 / 10</option>
                   <option value="10/20">10 / 20 (Standard)</option>
@@ -315,13 +315,13 @@ export default function Lobby({
 
               {/* Turn Timer */}
               <div>
-                <label className="text-[10px] font-mono uppercase text-slate-400 block mb-1">
+                <label className="text-[10px] font-mono uppercase text-[#6E6259] block mb-1">
                   Turn Timer
                 </label>
                 <select
                   value={turnTimeLimit}
                   onChange={(e) => setTurnTimeLimit(parseInt(e.target.value))}
-                  className="w-full bg-obsidian-surface border border-white/10 rounded-lg px-2.5 py-1.5 text-xs font-mono text-slate-200 focus:outline-none focus:border-brass cursor-pointer"
+                  className="w-full bg-[#FAF7F2] border border-[#DCD2C0] rounded-lg px-2.5 py-1.5 text-xs font-mono text-[#2C2623] focus:outline-none focus:border-[#8C4A1D] cursor-pointer"
                 >
                   <option value={15}>15 Seconds (Fast)</option>
                   <option value={20}>20 Seconds (Standard)</option>
@@ -331,29 +331,29 @@ export default function Lobby({
 
               {/* Time Bank */}
               <div>
-                <label className="text-[10px] font-mono uppercase text-slate-400 block mb-1">
+                <label className="text-[10px] font-mono uppercase text-[#6E6259] block mb-1">
                   "Big Time" Bank
                 </label>
                 <select
                   value={timeBankReserve}
                   onChange={(e) => setTimeBankReserve(parseInt(e.target.value))}
-                  className="w-full bg-obsidian-surface border border-white/10 rounded-lg px-2.5 py-1.5 text-xs font-mono text-slate-200 focus:outline-none focus:border-brass cursor-pointer"
+                  className="w-full bg-[#FAF7F2] border border-[#DCD2C0] rounded-lg px-2.5 py-1.5 text-xs font-mono text-[#2C2623] focus:outline-none focus:border-[#8C4A1D] cursor-pointer"
                 >
                   <option value={20}>+20s Reserve</option>
                   <option value={30}>+30s Reserve (Standard)</option>
-                  <option value={60}>+60s Reserve (Tournament)</option>
+                  <option value={60}>+60s Reserve (Deep)</option>
                 </select>
               </div>
             </div>
 
             {/* Teammate Sweat Mode Toggle */}
             {teamMode && (
-              <div className="flex items-center justify-between p-3 rounded-xl bg-obsidian-deep/60 border border-white/5">
+              <div className="flex items-center justify-between p-2.5 sm:p-3 rounded-xl bg-[#EAE2D3]/40 border border-[#DCD2C0]">
                 <div>
-                  <span className="text-xs font-mono font-bold text-slate-200 block">
+                  <span className="text-xs font-mono font-bold text-[#2C2623] block">
                     Teammate Sweat Mode
                   </span>
-                  <span className="text-[10px] font-mono text-slate-500">
+                  <span className="text-[10px] font-mono text-[#6E6259]">
                     Folded teammates can ghost-view active teammates' hole cards
                   </span>
                 </div>
@@ -361,11 +361,11 @@ export default function Lobby({
                   type="button"
                   onClick={() => setTeammateSweatMode(!teammateSweatMode)}
                   className={`w-9 h-5 rounded-full p-0.5 transition-colors cursor-pointer ${
-                    teammateSweatMode ? 'bg-brass' : 'bg-slate-800'
+                    teammateSweatMode ? 'bg-[#36638F]' : 'bg-[#DCD2C0]'
                   }`}
                 >
                   <div
-                    className={`w-4 h-4 rounded-full bg-obsidian transition-transform ${
+                    className={`w-4 h-4 rounded-full bg-[#FAF7F2] shadow-xs transition-transform ${
                       teammateSweatMode ? 'translate-x-4' : 'translate-x-0'
                     }`}
                   />
@@ -373,21 +373,21 @@ export default function Lobby({
               </div>
             )}
 
-            {/* Launch Table Button (Both touch and click enabled for iOS) */}
+            {/* Launch Table Button: Tactile Warm Peach / Terracotta Keycap */}
             <button
               type="button"
               onClick={handleCreate}
               disabled={loading}
-              className="w-full py-4 rounded-xl bg-gradient-to-r from-brass to-brass-dark hover:from-brass-light hover:to-brass text-obsidian font-mono font-bold text-sm uppercase tracking-wider shadow-glow-active transition-all active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer touch-manipulation select-none"
+              className="w-full py-3.5 sm:py-4 rounded-xl bg-[#FBE5D2] hover:bg-[#F7D5B8] text-[#8C4A1D] border border-[#E3B48D] border-b-2 border-b-[#CFA992] font-mono font-bold text-xs sm:text-sm uppercase tracking-wider shadow-card-tactile transition-all active:translate-y-[1px] disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer touch-manipulation select-none"
             >
-              <Play className="w-4 h-4 fill-obsidian" />
+              <Play className="w-4 h-4 fill-[#8C4A1D]" />
               <span>{loading ? 'Creating Room...' : 'Launch Table'}</span>
             </button>
           </form>
         ) : (
           <form onSubmit={handleJoin} className="space-y-4">
             <div>
-              <label className="block text-[11px] font-mono uppercase tracking-wider text-slate-400 mb-1.5 font-bold">
+              <label className="block text-[11px] font-mono uppercase tracking-wider text-[#6E6259] mb-1.5 font-bold">
                 6-Character Room Code
               </label>
               <input
@@ -399,7 +399,7 @@ export default function Lobby({
                 placeholder="e.g. 7K2M9X"
                 value={joinCode}
                 onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
-                className="w-full bg-obsidian-deep border border-white/10 rounded-xl px-4 py-3 text-base font-mono font-extrabold text-brass uppercase tracking-widest placeholder:text-slate-600 focus:outline-none focus:border-brass/60 transition-colors text-center"
+                className="w-full bg-[#EAE2D3]/50 border border-[#DCD2C0] rounded-xl px-4 py-3 text-base font-mono font-extrabold text-[#8C4A1D] uppercase tracking-widest placeholder:text-[#9A8E84] focus:outline-none focus:border-[#8C4A1D] transition-colors text-center"
               />
             </div>
 
@@ -407,7 +407,7 @@ export default function Lobby({
               type="button"
               onClick={handleJoin}
               disabled={loading || !joinCode.trim()}
-              className="w-full py-4 rounded-xl bg-gradient-to-r from-brass to-brass-dark hover:from-brass-light hover:to-brass text-obsidian font-mono font-bold text-sm uppercase tracking-wider shadow-glow-active transition-all active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer touch-manipulation select-none"
+              className="w-full py-3.5 sm:py-4 rounded-xl bg-[#FBE5D2] hover:bg-[#F7D5B8] text-[#8C4A1D] border border-[#E3B48D] border-b-2 border-b-[#CFA992] font-mono font-bold text-xs sm:text-sm uppercase tracking-wider shadow-card-tactile transition-all active:translate-y-[1px] disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer touch-manipulation select-none"
             >
               <ArrowRight className="w-4 h-4" />
               <span>{loading ? 'Joining Room...' : 'Join Table'}</span>

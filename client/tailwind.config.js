@@ -7,38 +7,59 @@ export default {
   theme: {
     extend: {
       colors: {
-        obsidian: {
-          DEFAULT: '#0A0B0E',
-          deep: '#060709',
-          surface: '#12151C',
-          raised: '#1A1E29',
-          border: 'rgba(255, 255, 255, 0.08)',
-          'border-gold': 'rgba(197, 160, 89, 0.25)',
+        parchment: {
+          DEFAULT: '#FAF7F2',
+          light: '#FFFDF9',
+          card: '#FAF7F2',
+          elevated: '#FFFFFF',
+          border: '#E2D9C8',
+          'border-subtle': '#EDE6D8',
+        },
+        sand: {
+          DEFAULT: '#EAE2D3',
+          light: '#F5F0E6',
+          dark: '#DCD2C0',
+          recessed: '#E5DCDB',
         },
         felt: {
-          DEFAULT: '#0F291E',
-          dark: '#0A1C14',
-          light: '#16382A',
-          border: '#C5A059',
+          DEFAULT: '#C8DBC8',
+          light: '#D7E7D7',
+          dark: '#B4CCB4',
+          deep: '#9FB89F',
+          border: 'rgba(255, 255, 255, 0.7)',
         },
-        brass: {
-          DEFAULT: '#C5A059',
-          light: '#E2C889',
-          dark: '#8C6F34',
+        rail: {
+          DEFAULT: '#D8C7B2',
+          light: '#E5D8C6',
+          dark: '#C4B097',
+          deep: '#AC9A81',
+          shadow: 'rgba(62, 50, 38, 0.16)',
+        },
+        ink: {
+          DEFAULT: '#2C2623',
+          muted: '#6E6259',
+          subtle: '#9A8E84',
+          faint: '#C2B8AC',
         },
         team: {
-          alpha: '#D4AF37', // Imperial Gold
-          'alpha-glow': 'rgba(212, 175, 55, 0.2)',
-          omega: '#38BDF8', // Cobalt Ice
-          'omega-glow': 'rgba(56, 189, 248, 0.2)',
-          sigma: '#A78BFA', // Titanium Amethyst
-          'sigma-glow': 'rgba(167, 139, 250, 0.2)',
+          alpha: '#9E7223',
+          'alpha-bg': '#FDF3D7',
+          'alpha-border': '#F2D08B',
+          'alpha-badge': '#F5C76B',
+          omega: '#36638F',
+          'omega-bg': '#E6F0FA',
+          'omega-border': '#B3D1F0',
+          'omega-badge': '#89B9E8',
+          sigma: '#6E4482',
+          'sigma-bg': '#F3E8F7',
+          'sigma-border': '#D9BBE6',
+          'sigma-badge': '#C499D9',
         },
         suit: {
-          spade: '#0F172A',
-          heart: '#DC2626',
-          diamond: '#2563EB',
-          club: '#16A34A',
+          spade: '#2C2623', // Warm Espresso Charcoal
+          heart: '#D96B6B', // Dusty Coral Rose
+          diamond: '#5B8AC2', // Soft Cornflower / Pastel Cobalt
+          club: '#5E9472',  // Muted Matcha / Sage
         }
       },
       fontFamily: {
@@ -47,12 +68,14 @@ export default {
         body: ['Outfit', '-apple-system', 'sans-serif'],
       },
       boxShadow: {
-        'felt-inner': 'inset 0 0 100px rgba(0, 0, 0, 0.75), inset 0 0 20px rgba(0, 0, 0, 0.9)',
-        'brass-inlay': '0 0 0 1px rgba(197, 160, 89, 0.4), 0 0 24px rgba(197, 160, 89, 0.15)',
-        'elevation-surface': '0 4px 20px -2px rgba(0, 0, 0, 0.5), 0 2px 6px -1px rgba(0, 0, 0, 0.3)',
-        'elevation-card': '0 10px 25px -5px rgba(0, 0, 0, 0.6), 0 8px 10px -6px rgba(0, 0, 0, 0.4)',
-        'glow-active': '0 0 15px rgba(197, 160, 89, 0.35)',
-        'glow-bigtime': '0 0 25px rgba(239, 68, 68, 0.4)',
+        'clay-ambient': '0 12px 32px -8px rgba(62, 50, 38, 0.08), 0 4px 12px -2px rgba(62, 50, 38, 0.04)',
+        'clay-card': '0 8px 24px -4px rgba(62, 50, 38, 0.08), 0 2px 6px -1px rgba(62, 50, 38, 0.04)',
+        'clay-button': '0 2px 0 0 #DFAFAF',
+        'felt-surface': 'inset 0 0 80px rgba(138, 166, 138, 0.45), inset 0 2px 6px rgba(255, 255, 255, 0.6)',
+        'rail-bevel': '0 18px 40px -10px rgba(62, 50, 38, 0.18), 0 4px 12px -2px rgba(62, 50, 38, 0.12), inset 0 2px 3px rgba(255, 255, 255, 0.4)',
+        'card-tactile': '0 4px 14px -2px rgba(62, 50, 38, 0.12), 0 1px 3px rgba(62, 50, 38, 0.08)',
+        'glow-active': '0 0 16px rgba(158, 114, 35, 0.25)',
+        'glow-bigtime': '0 0 20px rgba(196, 153, 217, 0.45)',
       },
       animation: {
         'pulse-subtle': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
@@ -60,8 +83,8 @@ export default {
       },
       keyframes: {
         timerPulse: {
-          '0%, 100%': { transform: 'scale(1)', filter: 'drop-shadow(0 0 0px rgba(239, 68, 68, 0))' },
-          '50%': { transform: 'scale(1.02)', filter: 'drop-shadow(0 0 8px rgba(239, 68, 68, 0.6))' },
+          '0%, 100%': { transform: 'scale(1)', filter: 'drop-shadow(0 0 0px rgba(217, 107, 107, 0))' },
+          '50%': { transform: 'scale(1.02)', filter: 'drop-shadow(0 0 8px rgba(217, 107, 107, 0.5))' },
         }
       }
     },

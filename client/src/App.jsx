@@ -481,7 +481,7 @@ export default function App() {
   }
 
   return (
-    <div className="relative min-h-screen w-full bg-obsidian text-slate-100 flex flex-col overflow-hidden">
+    <div className="relative min-h-screen w-full text-[#2C2623] flex flex-col overflow-hidden">
       {/* Top Telemetry Header */}
       <TeamHUD
         roomCode={roomCode}
@@ -496,14 +496,14 @@ export default function App() {
 
       {/* "Big Time" Event Banner Notification */}
       {bigTimeBanner && (
-        <div className="absolute top-16 left-1/2 -translate-x-1/2 z-50 px-4 py-2 rounded-xl bg-red-950/90 border border-red-500/60 text-red-200 text-xs font-mono font-bold shadow-glow-bigtime animate-bounce flex items-center gap-2">
-          <span>🚨</span>
+        <div className="absolute top-16 left-1/2 -translate-x-1/2 z-50 px-4 py-2 rounded-xl bg-[#F0E4F5] border border-[#D9BBE6] text-[#6E4482] text-xs font-mono font-bold shadow-glow-bigtime animate-bounce flex items-center gap-2">
+          <span>⏰</span>
           <span>{bigTimeBanner}</span>
         </div>
       )}
 
       {/* Main Table View Area */}
-      <main className="flex-1 flex items-center justify-center p-2 md:p-6 pb-28 md:pb-36 overflow-hidden">
+      <main className="flex-1 flex items-center justify-center p-2 sm:p-4 md:p-6 pb-28 md:pb-36 overflow-hidden">
         <PokerTable
           tableState={tableState}
           myPlayerId={player.id}

@@ -1,37 +1,42 @@
 // client/src/components/PlayerSeat.jsx
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Shield, Clock, PlusCircle } from 'lucide-react';
+import { Clock, PlusCircle } from 'lucide-react';
 import PlayingCard from './PlayingCard';
 
+// Muted Pastel Team Affiliations & Semantic Accents
 const TEAM_CONFIG = {
   ALPHA: {
     name: 'Alpha',
-    bg: 'bg-amber-950/40',
-    border: 'border-amber-500/50',
-    text: 'text-amber-400',
-    badge: 'bg-amber-500/20 text-amber-300 border-amber-500/40'
+    bg: 'bg-[#FDF3D7]',
+    border: 'border-[#F2D08B]',
+    text: 'text-[#9E7223]',
+    badge: 'bg-[#FDF3D7] text-[#9E7223] border-[#F2D08B]',
+    accentDot: '#F5C76B'
   },
   OMEGA: {
     name: 'Omega',
-    bg: 'bg-sky-950/40',
-    border: 'border-sky-500/50',
-    text: 'text-sky-400',
-    badge: 'bg-sky-500/20 text-sky-300 border-sky-500/40'
+    bg: 'bg-[#E6F0FA]',
+    border: 'border-[#B3D1F0]',
+    text: 'text-[#36638F]',
+    badge: 'bg-[#E6F0FA] text-[#36638F] border-[#B3D1F0]',
+    accentDot: '#89B9E8'
   },
   SIGMA: {
     name: 'Sigma',
-    bg: 'bg-purple-950/40',
-    border: 'border-purple-500/50',
-    text: 'text-purple-400',
-    badge: 'bg-purple-500/20 text-purple-300 border-purple-500/40'
+    bg: 'bg-[#F3E8F7]',
+    border: 'border-[#D9BBE6]',
+    text: 'text-[#6E4482]',
+    badge: 'bg-[#F3E8F7] text-[#6E4482] border-[#D9BBE6]',
+    accentDot: '#C499D9'
   },
   NONE: {
     name: 'Solo',
-    bg: 'bg-slate-900/40',
-    border: 'border-slate-700/50',
-    text: 'text-slate-400',
-    badge: 'bg-slate-800 text-slate-300 border-slate-700'
+    bg: 'bg-[#EAE2D3]',
+    border: 'border-[#DCD2C0]',
+    text: 'text-[#6E6259]',
+    badge: 'bg-[#FAF7F2] text-[#6E6259] border-[#DCD2C0]',
+    accentDot: '#9A8E84'
   }
 };
 
@@ -81,10 +86,10 @@ export default function PlayerSeat({
       <div className={`relative flex flex-col items-center justify-center ${className}`}>
         <button
           onClick={() => onSit(seat.seatNumber)}
-          className="group relative flex flex-col items-center justify-center w-24 h-24 rounded-full border border-dashed border-white/20 bg-obsidian-surface/60 hover:bg-obsidian-raised/80 hover:border-brass/60 transition-all duration-200 cursor-pointer shadow-elevation-surface active:scale-[0.96]"
+          className="group relative flex flex-col items-center justify-center w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-full border border-dashed border-[#C4B097]/60 bg-[#FAF7F2]/60 hover:bg-[#FFFDF9] hover:border-[#9E7223]/70 transition-all duration-200 cursor-pointer shadow-card-tactile active:scale-[0.96]"
         >
-          <PlusCircle className="w-6 h-6 text-slate-400 group-hover:text-brass transition-colors mb-1" />
-          <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400 group-hover:text-brass">
+          <PlusCircle className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-[#9A8E84] group-hover:text-[#9E7223] transition-colors mb-0.5" />
+          <span className="text-[9px] sm:text-[10px] font-mono uppercase tracking-wider text-[#9A8E84] group-hover:text-[#9E7223]">
             Seat {seat.seatNumber + 1}
           </span>
         </button>
@@ -93,7 +98,7 @@ export default function PlayerSeat({
   }
 
   // SVG ring geometry for the turn timer
-  const radius = 48;
+  const radius = 46;
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference - progress * circumference;
   const isUrgent = remainingSec <= 5 && player.isTurn;
@@ -101,48 +106,48 @@ export default function PlayerSeat({
   return (
     <div className={`relative flex flex-col items-center select-none ${className}`}>
       {/* Dealer / Blinds Puck Badges */}
-      <div className="absolute -top-3 left-1/2 -translate-x-1/2 flex items-center gap-1 z-20">
+      <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 flex items-center gap-1 z-20">
         {isDealer && (
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
-            className="w-6 h-6 rounded-full bg-white text-slate-900 border-2 border-slate-950 font-extrabold text-[11px] font-mono flex items-center justify-center shadow-lg"
+            className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-[#FAF7F2] text-[#2C2623] border-2 border-[#D8C7B2] font-extrabold text-[10px] sm:text-[11px] font-mono flex items-center justify-center shadow-card-tactile"
             title="Dealer Button"
           >
             D
           </motion.div>
         )}
         {isSB && (
-          <div className="w-5 h-5 rounded-full bg-amber-500 text-slate-950 border border-slate-900 font-bold text-[9px] font-mono flex items-center justify-center shadow-md">
+          <div className="w-4.5 h-4.5 sm:w-5 sm:h-5 rounded-full bg-[#FDF3D7] text-[#9E7223] border border-[#F2D08B] font-bold text-[8px] sm:text-[9px] font-mono flex items-center justify-center shadow-xs">
             SB
           </div>
         )}
         {isBB && (
-          <div className="w-5 h-5 rounded-full bg-emerald-500 text-slate-950 border border-slate-900 font-bold text-[9px] font-mono flex items-center justify-center shadow-md">
+          <div className="w-4.5 h-4.5 sm:w-5 sm:h-5 rounded-full bg-[#DFF0E4] text-[#2B6340] border border-[#A8D1B5] font-bold text-[8px] sm:text-[9px] font-mono flex items-center justify-center shadow-xs">
             BB
           </div>
         )}
       </div>
 
       {/* Main Seat Avatar Pod */}
-      <div className="relative w-26 h-26 flex items-center justify-center">
+      <div className="relative w-20 h-20 sm:w-24 sm:h-24 md:w-26 md:h-26 flex items-center justify-center">
         {/* SVG Turn Countdown Progress Ring */}
         {player.isTurn && (
           <svg className="absolute inset-0 w-full h-full -rotate-90 pointer-events-none z-10">
             <circle
-              cx="52"
-              cy="52"
-              r={radius}
-              stroke="rgba(255, 255, 255, 0.08)"
-              strokeWidth="4"
+              cx="50%"
+              cy="50%"
+              r="44%"
+              stroke="rgba(216, 199, 178, 0.4)"
+              strokeWidth="3.5"
               fill="transparent"
             />
             <circle
-              cx="52"
-              cy="52"
-              r={radius}
-              stroke={isUrgent ? '#EF4444' : '#C5A059'}
-              strokeWidth="4"
+              cx="50%"
+              cy="50%"
+              r="44%"
+              stroke={isUrgent ? '#D96B6B' : '#9E7223'}
+              strokeWidth="3.5"
               fill="transparent"
               strokeDasharray={circumference}
               strokeDashoffset={strokeDashoffset}
@@ -152,39 +157,39 @@ export default function PlayerSeat({
           </svg>
         )}
 
-        {/* Player Card Body */}
+        {/* Player Card Body (Creamy Parchment Pod) */}
         <div
-          className={`relative w-22 h-22 rounded-full border flex flex-col items-center justify-center transition-all duration-300 shadow-elevation-surface overflow-hidden ${
+          className={`relative w-17 h-17 sm:w-20 sm:h-20 md:w-22 md:h-22 rounded-full border flex flex-col items-center justify-center transition-all duration-300 shadow-card-tactile overflow-hidden ${
             player.folded
-              ? 'opacity-40 grayscale bg-obsidian-deep border-white/5'
+              ? 'opacity-40 grayscale bg-[#EAE2D3] border-[#DCD2C0]'
               : player.isTurn
               ? isUrgent
-                ? 'bg-red-950/40 border-red-500 shadow-glow-bigtime animate-timer-warning'
-                : 'bg-obsidian-raised border-brass shadow-glow-active'
-              : `${team.bg} ${team.border} bg-obsidian-surface`
-          } ${isMe ? 'ring-2 ring-white/20' : ''}`}
+                ? 'bg-[#FDF2F2] border-[#D96B6B] shadow-glow-bigtime animate-timer-warning'
+                : 'bg-[#FAF7F2] border-[#9E7223] ring-2 ring-[#F2D08B] shadow-glow-active'
+              : `${team.bg} ${team.border}`
+          } ${isMe ? 'ring-2 ring-[#9E7223]/50' : ''}`}
         >
           {/* Team Monogram Header */}
           <div className="flex items-center gap-1 mb-0.5">
-            <span className={`text-[8px] font-mono font-bold uppercase tracking-wider px-1.5 py-0.2 rounded-full border ${team.badge}`}>
+            <span className={`text-[7px] sm:text-[8px] font-mono font-bold uppercase tracking-wider px-1.5 py-0.2 rounded-full border ${team.badge}`}>
               {team.name}
             </span>
           </div>
 
           {/* Player Name */}
-          <span className="text-xs font-semibold text-slate-100 truncate max-w-[76px] px-1 text-center leading-tight">
-            {player.name} {isMe && <span className="text-[9px] text-brass font-normal">(You)</span>}
+          <span className="text-[11px] sm:text-xs font-semibold text-[#2C2623] truncate max-w-[65px] sm:max-w-[76px] px-1 text-center leading-tight">
+            {player.name} {isMe && <span className="text-[8px] sm:text-[9px] text-[#9E7223] font-normal">(You)</span>}
           </span>
 
           {/* Chip Stack (Tabular Monospace) */}
-          <span className="tabular-nums font-mono font-bold text-xs text-brass-light mt-0.5">
+          <span className="tabular-nums font-mono font-bold text-[11px] sm:text-xs text-[#2C2623] mt-0.5">
             {player.chips.toLocaleString()}
           </span>
 
           {/* Turn timer badge when active */}
           {player.isTurn && (
-            <div className={`absolute bottom-1 px-1.5 py-0.2 rounded text-[9px] font-mono font-bold ${
-              isUrgent ? 'bg-red-500 text-white' : 'bg-brass text-obsidian'
+            <div className={`absolute bottom-0.5 sm:bottom-1 px-1.5 py-0.2 rounded text-[8px] sm:text-[9px] font-mono font-bold ${
+              isUrgent ? 'bg-[#D96B6B] text-white' : 'bg-[#9E7223] text-[#FFFDF9]'
             }`}>
               {remainingSec}s
             </div>
@@ -194,18 +199,18 @@ export default function PlayerSeat({
         {/* Time Bank Reserve Pill */}
         {player.timeBank > 0 && !player.folded && (
           <div
-            className="absolute -bottom-2 px-1.5 py-0.2 rounded-full bg-obsidian-deep/90 border border-white/10 text-[8px] font-mono text-slate-400 flex items-center gap-0.5 z-20"
+            className="absolute -bottom-2 px-1.5 py-0.2 rounded-full bg-[#FAF7F2] border border-[#E2D9C8] text-[7px] sm:text-[8px] font-mono text-[#6E6259] flex items-center gap-0.5 z-20 shadow-xs"
             title={`Time Bank reserve: +${player.timeBank}s`}
           >
-            <Clock className="w-2.5 h-2.5 text-brass" />
-            <span className="tabular-nums">+{player.timeBank}s</span>
+            <Clock className="w-2.5 h-2.5 text-[#6E4482]" />
+            <span className="tabular-nums font-bold">+{player.timeBank}s</span>
           </div>
         )}
       </div>
 
       {/* Hole Cards Display */}
       {player.hasHoleCards && !player.folded && (
-        <div className="absolute -top-7 flex items-center -space-x-3.5 z-10">
+        <div className="absolute -top-6 sm:-top-7 flex items-center -space-x-3 sm:-space-x-3.5 z-10">
           {player.isCardVisible && player.holeCards ? (
             player.holeCards.map((card, i) => (
               <PlayingCard
@@ -229,23 +234,23 @@ export default function PlayerSeat({
       {/* Street Bet Chip Indicator */}
       {player.streetBet > 0 && (
         <motion.div
-          initial={{ scale: 0.8, opacity: 0, y: 5 }}
+          initial={{ scale: 0.8, opacity: 0, y: 4 }}
           animate={{ scale: 1, opacity: 1, y: 0 }}
-          className="absolute -bottom-8 px-2 py-0.5 rounded-full bg-obsidian-raised border border-brass/50 text-brass text-[10px] font-mono font-bold shadow-lg flex items-center gap-1 z-20"
+          className="absolute -bottom-7 sm:-bottom-8 px-2 py-0.5 rounded-full bg-[#FAF7F2] border border-[#E2D9C8] text-[#8C4A1D] text-[9px] sm:text-[10px] font-mono font-bold shadow-card-tactile flex items-center gap-1 z-20"
         >
-          <div className="w-2 h-2 rounded-full bg-brass/80" />
+          <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-[#8C4A1D]" />
           <span className="tabular-nums">{player.streetBet.toLocaleString()}</span>
         </motion.div>
       )}
 
       {/* Folded / All-in Status Tag */}
       {player.isAllIn && (
-        <div className="absolute top-2 px-1.5 py-0.2 rounded bg-amber-500/90 text-slate-950 text-[9px] font-mono font-extrabold uppercase tracking-wider z-20">
+        <div className="absolute top-1.5 px-1.5 py-0.2 rounded bg-[#FBE5D2] border border-[#E3B48D] text-[#8C4A1D] text-[8px] sm:text-[9px] font-mono font-extrabold uppercase tracking-wider z-20 shadow-xs">
           ALL-IN
         </div>
       )}
       {player.folded && (
-        <div className="absolute top-2 px-1.5 py-0.2 rounded bg-slate-800 text-slate-400 text-[9px] font-mono uppercase tracking-wider z-20">
+        <div className="absolute top-1.5 px-1.5 py-0.2 rounded bg-[#EAE2D3] border border-[#DCD2C0] text-[#9A8E84] text-[8px] sm:text-[9px] font-mono uppercase tracking-wider z-20">
           FOLDED
         </div>
       )}

@@ -1,7 +1,7 @@
 // client/src/components/HostSettingsModal.jsx
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Save, Sliders, Shield } from 'lucide-react';
+import { X, Save, Sliders } from 'lucide-react';
 
 export default function HostSettingsModal({
   isOpen,
@@ -40,25 +40,25 @@ export default function HostSettingsModal({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
+            className="fixed inset-0 bg-stone-900/30 backdrop-blur-sm z-50"
           />
 
           <motion.div
             initial={{ scale: 0.95, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.95, opacity: 0 }}
-            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-obsidian-surface border border-white/10 rounded-2xl p-6 shadow-2xl z-50 select-none"
+            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-[#FAF7F2] border border-[#E2D9C8] rounded-2xl p-6 shadow-clay-ambient z-50 select-none"
           >
-            <div className="flex items-center justify-between pb-3 border-b border-white/10 mb-4">
+            <div className="flex items-center justify-between pb-3 border-b border-[#E2D9C8] mb-4">
               <div className="flex items-center gap-2">
-                <Sliders className="w-5 h-5 text-brass" />
-                <h3 className="text-base font-bold text-slate-100 font-display">
+                <Sliders className="w-5 h-5 text-[#8C4A1D]" />
+                <h3 className="text-base font-bold text-[#2C2623] font-display">
                   Table Host Controls
                 </h3>
               </div>
               <button
                 onClick={onClose}
-                className="p-1 rounded-lg bg-obsidian-raised text-slate-400 hover:text-white"
+                className="p-1 rounded-lg bg-[#FAF7F2] hover:bg-white text-[#6E6259] hover:text-[#2C2623] border border-[#E2D9C8] shadow-xs cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -67,7 +67,7 @@ export default function HostSettingsModal({
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-[10px] font-mono uppercase text-slate-400 block mb-1">
+                  <label className="text-[10px] font-mono uppercase text-[#6E6259] block mb-1">
                     Small Blind
                   </label>
                   <input
@@ -75,11 +75,11 @@ export default function HostSettingsModal({
                     min="1"
                     value={smallBlind}
                     onChange={(e) => setSmallBlind(parseInt(e.target.value) || 1)}
-                    className="w-full bg-obsidian-deep border border-white/10 rounded-lg p-2 text-xs font-mono text-slate-100 focus:outline-none focus:border-brass"
+                    className="w-full bg-[#EAE2D3]/60 border border-[#DCD2C0] rounded-lg p-2 text-xs font-mono text-[#2C2623] focus:outline-none focus:border-[#8C4A1D]"
                   />
                 </div>
                 <div>
-                  <label className="text-[10px] font-mono uppercase text-slate-400 block mb-1">
+                  <label className="text-[10px] font-mono uppercase text-[#6E6259] block mb-1">
                     Big Blind
                   </label>
                   <input
@@ -87,20 +87,20 @@ export default function HostSettingsModal({
                     min="2"
                     value={bigBlind}
                     onChange={(e) => setBigBlind(parseInt(e.target.value) || 2)}
-                    className="w-full bg-obsidian-deep border border-white/10 rounded-lg p-2 text-xs font-mono text-slate-100 focus:outline-none focus:border-brass"
+                    className="w-full bg-[#EAE2D3]/60 border border-[#DCD2C0] rounded-lg p-2 text-xs font-mono text-[#2C2623] focus:outline-none focus:border-[#8C4A1D]"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-[10px] font-mono uppercase text-slate-400 block mb-1">
+                  <label className="text-[10px] font-mono uppercase text-[#6E6259] block mb-1">
                     Turn Timer (s)
                   </label>
                   <select
                     value={turnTimeLimit}
                     onChange={(e) => setTurnTimeLimit(parseInt(e.target.value))}
-                    className="w-full bg-obsidian-deep border border-white/10 rounded-lg p-2 text-xs font-mono text-slate-100 focus:outline-none focus:border-brass"
+                    className="w-full bg-[#EAE2D3]/60 border border-[#DCD2C0] rounded-lg p-2 text-xs font-mono text-[#2C2623] focus:outline-none focus:border-[#8C4A1D]"
                   >
                     <option value={15}>15s (Fast)</option>
                     <option value={20}>20s (Standard)</option>
@@ -108,13 +108,13 @@ export default function HostSettingsModal({
                   </select>
                 </div>
                 <div>
-                  <label className="text-[10px] font-mono uppercase text-slate-400 block mb-1">
+                  <label className="text-[10px] font-mono uppercase text-[#6E6259] block mb-1">
                     Time Bank (s)
                   </label>
                   <select
                     value={timeBankReserve}
                     onChange={(e) => setTimeBankReserve(parseInt(e.target.value))}
-                    className="w-full bg-obsidian-deep border border-white/10 rounded-lg p-2 text-xs font-mono text-slate-100 focus:outline-none focus:border-brass"
+                    className="w-full bg-[#EAE2D3]/60 border border-[#DCD2C0] rounded-lg p-2 text-xs font-mono text-[#2C2623] focus:outline-none focus:border-[#8C4A1D]"
                   >
                     <option value={20}>+20s</option>
                     <option value={30}>+30s</option>
@@ -123,24 +123,24 @@ export default function HostSettingsModal({
                 </div>
               </div>
 
-              <div className="flex items-center justify-between p-3 rounded-xl bg-obsidian-deep border border-white/5">
+              <div className="flex items-center justify-between p-3 rounded-xl bg-[#EAE2D3]/40 border border-[#DCD2C0]">
                 <div>
-                  <span className="text-xs font-mono font-bold text-slate-200 block">
+                  <span className="text-xs font-mono font-bold text-[#2C2623] block">
                     Teammate Sweat Mode
                   </span>
-                  <span className="text-[10px] font-mono text-slate-500">
+                  <span className="text-[10px] font-mono text-[#6E6259]">
                     Ghost-view active teammates' hole cards
                   </span>
                 </div>
                 <button
                   type="button"
                   onClick={() => setTeammateSweatMode(!teammateSweatMode)}
-                  className={`w-9 h-5 rounded-full p-0.5 transition-colors ${
-                    teammateSweatMode ? 'bg-brass' : 'bg-slate-800'
+                  className={`w-9 h-5 rounded-full p-0.5 transition-colors cursor-pointer ${
+                    teammateSweatMode ? 'bg-[#36638F]' : 'bg-[#DCD2C0]'
                   }`}
                 >
                   <div
-                    className={`w-4 h-4 rounded-full bg-obsidian transition-transform ${
+                    className={`w-4 h-4 rounded-full bg-[#FAF7F2] shadow-xs transition-transform ${
                       teammateSweatMode ? 'translate-x-4' : 'translate-x-0'
                     }`}
                   />
@@ -149,7 +149,7 @@ export default function HostSettingsModal({
 
               <button
                 type="submit"
-                className="w-full py-2.5 rounded-xl bg-brass hover:bg-brass-light text-obsidian text-xs font-mono font-bold uppercase tracking-wider transition-all active:scale-[0.97] flex items-center justify-center gap-1.5"
+                className="w-full py-2.5 rounded-xl bg-[#FBE5D2] hover:bg-[#F7D5B8] text-[#8C4A1D] border border-[#E3B48D] border-b-2 border-b-[#CFA992] text-xs font-mono font-bold uppercase tracking-wider transition-all active:translate-y-[1px] flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
               >
                 <Save className="w-4 h-4" />
                 <span>Save Table Rules</span>
