@@ -10,20 +10,25 @@ import ChatDrawer from './components/ChatDrawer';
 import HostSettingsModal from './components/HostSettingsModal';
 import { sounds } from './audio';
 
-// Dynamic socket URL: honors VITE_SOCKET_URL, auto-detects dev port 5173 to backend 3001, or uses origin
+// Dynamic socket URL: honors VITE_SOCKET_URL, auto-detects Vercel/dev, or uses Render
 const getSocketUrl = () => {
   if (import.meta.env?.VITE_SOCKET_URL) return import.meta.env.VITE_SOCKET_URL;
   if (typeof window !== 'undefined') {
-    // When accessing Vite dev server (port 5173), direct socket to backend port 3001 using the current hostname/IP
+    // If running on Vercel (production or preview), connect to Render backend
+    if (window.location.hostname.includes('vercel.app')) {
+      return 'https://poker-tab.onrender.com';
+    }
+    // When accessing Vite dev server locally (port 5173), direct to backend port 3001
     if (window.location.port === '5173') {
       return `${window.location.protocol}//${window.location.hostname}:3001`;
     }
     // In production / Render / unified Express server
     return window.location.origin;
   }
-  return 'http://localhost:3001';
+  return 'https://poker-tab.onrender.com';
 };
 const SOCKET_URL = getSocketUrl();
+
 
 // Local in-memory offline fallback table generator
 
@@ -222,13 +227,22 @@ export default function App() {
   }, [player.id]);
 
   // Room Creation
+  // Pre-warm Render backend on initial page load if pointing to Render
+  useEffect(() => {
+    if (SOCKET_URL.includes('onrender.com')) {
+      fetch(`${SOCKET_URL}/api/health`, { mode: 'cors' }).catch(() => {});
+    }
+  }, []);
+
+  // Room Creation
   const handleCreateRoom = ({ name, team, config }) => {
     setLoading(true);
     setErrorMsg('');
     const updatedPlayer = { ...player, name, team };
     setPlayer(updatedPlayer);
 
-    // 2-second fallback safety net: if server is slow or disconnected, launch instantly in local sandbox
+    // Dynamic timeout: allow 15 seconds if connecting to Render cold start, or 3s locally
+    const timeoutDuration = SOCKET_URL.includes('onrender.com') ? 15000 : 3000;
     const fallbackTimer = setTimeout(() => {
       console.warn('[PokerTab] Backend timeout or disconnected. Activating local offline table.');
       const localState = createLocalTableState(updatedPlayer, config);
@@ -239,7 +253,7 @@ export default function App() {
       setLoading(false);
       setBigTimeBanner('Local Tabletop Simulation Active');
       setTimeout(() => setBigTimeBanner(null), 4000);
-    }, 2000);
+    }, timeoutDuration);
 
     if (socket && socket.connected) {
       socket.emit('CREATE_ROOM', { hostPlayer: updatedPlayer, config }, (res) => {
@@ -254,14 +268,18 @@ export default function App() {
         }
       });
     } else {
-      // Socket offline: immediately open local sandbox
-      clearTimeout(fallbackTimer);
-      const localState = createLocalTableState(updatedPlayer, config);
-      setTableState(localState);
-      setRoomCode('SANDBOX');
-      setHostId(updatedPlayer.id);
-      setInRoom(true);
-      setLoading(false);
+      // If connecting to Render, wait for connection instead of instantly opening sandbox
+      if (SOCKET_URL.includes('onrender.com')) {
+        setErrorMsg('Waking up Render game engine, please wait a moment...');
+      } else {
+        clearTimeout(fallbackTimer);
+        const localState = createLocalTableState(updatedPlayer, config);
+        setTableState(localState);
+        setRoomCode('SANDBOX');
+        setHostId(updatedPlayer.id);
+        setInRoom(true);
+        setLoading(false);
+      }
     }
   };
 
@@ -274,8 +292,9 @@ export default function App() {
 
     const timer = setTimeout(() => {
       setLoading(false);
-      setErrorMsg('Server took too long to respond. Please check server connection.');
-    }, 4000);
+      setErrorMsg('Server took too long to respond. Render may still be waking up — please try again in 10 seconds.');
+    }, 15000);
+
 
     if (socket && socket.connected) {
       socket.emit('JOIN_ROOM', { roomCode: code, player: updatedPlayer }, (res) => {
