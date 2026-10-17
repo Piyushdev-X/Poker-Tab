@@ -7,23 +7,23 @@ const TEAMS = [
   {
     id: 'ALPHA',
     name: 'Team Alpha',
-    accent: 'border-[#F2D08B] text-[#9E7223] bg-[#FDF3D7]',
-    dot: 'bg-[#F5C76B]',
-    desc: 'Buttercup Apricot'
+    accent: 'border-[#F59E0B] text-[#92400E] bg-[#FEF3C7]',
+    dot: 'bg-[#F59E0B]',
+    desc: 'Amber Buttercup'
   },
   {
     id: 'OMEGA',
     name: 'Team Omega',
-    accent: 'border-[#B3D1F0] text-[#36638F] bg-[#E6F0FA]',
-    dot: 'bg-[#89B9E8]',
-    desc: 'Periwinkle Sky'
+    accent: 'border-[#3B82F6] text-[#1E40AF] bg-[#DBEAFE]',
+    dot: 'bg-[#3B82F6]',
+    desc: 'Cobalt Sapphire'
   },
   {
     id: 'SIGMA',
     name: 'Team Sigma',
-    accent: 'border-[#D9BBE6] text-[#6E4482] bg-[#F3E8F7]',
-    dot: 'bg-[#C499D9]',
-    desc: 'Lavender Lilac'
+    accent: 'border-[#A855F7] text-[#6B21A8] bg-[#F3E8FF]',
+    dot: 'bg-[#A855F7]',
+    desc: 'Regal Violet'
   }
 ];
 
@@ -110,47 +110,43 @@ export default function Lobby({
   };
 
   return (
-    <div className="relative min-h-screen w-full flex flex-col items-center justify-center p-3 sm:p-6 md:p-8 select-none">
-      {/* Background Subtle Paper / Warm Noise Vignette */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_35%,rgba(216,199,178,0.35),transparent_65%)] pointer-events-none" />
-
-      {/* Main Container Card: Creamy Parchment */}
+    <div className="min-h-screen w-full flex items-center justify-center p-3 sm:p-6 overflow-y-auto bg-[#F7F4EE]">
       <motion.div
-        initial={{ opacity: 0, y: 15 }}
+        initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-        className="relative w-full max-w-lg bg-[#FAF7F2]/95 backdrop-blur-xl border border-[#E2D9C8] rounded-3xl p-5 sm:p-7 md:p-8 shadow-clay-ambient overflow-hidden"
+        className="relative w-full max-w-lg bg-[#FFFFFF] border-2 border-[#D5CCC0] rounded-3xl p-6 sm:p-8 shadow-hardware-pod overflow-hidden"
       >
         {/* Card Header Brand */}
-        <div className="flex flex-col items-center text-center mb-5 sm:mb-6">
-          <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-[#EAE2D3] border border-[#DCD2C0] flex items-center justify-center text-[#8C4A1D] text-xl sm:text-2xl font-bold mb-2.5 shadow-card-tactile">
+        <div className="flex flex-col items-center text-center mb-6">
+          <div className="w-12 h-12 rounded-2xl bg-[#121110] text-[#FAF8F5] flex items-center justify-center text-2xl font-bold mb-3 shadow-md">
             ♠
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#2C2623] font-display">
+          <h1 className="text-3xl font-black tracking-tight text-[#121110] font-display">
             PokerTab
           </h1>
-          <p className="text-xs sm:text-sm font-mono text-[#6E6259] mt-0.5">
-            Warm Editorial Tabletop & Team Settlement Ledger
+          <p className="text-xs sm:text-sm font-mono text-[#4A443E] font-bold mt-1">
+            Warm Architectural Tabletop & Team Settlement Ledger
           </p>
 
           {/* Connection status badge */}
-          <div className="mt-2 flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#EAE2D3]/60 border border-[#DCD2C0]">
-            <span className={`w-2 h-2 rounded-full ${isConnected ? 'bg-[#5E9472]' : 'bg-[#D96B6B] animate-pulse'}`} />
-            <span className="text-[10px] font-mono uppercase tracking-wider text-[#6E6259]">
-              {isConnected ? 'Engine Online' : 'Connecting Engine...'}
+          <div className="mt-3 flex items-center gap-2 px-3 py-1 rounded-full bg-[#F7F4EE] border border-[#D5CCC0]">
+            <span className={`w-2.5 h-2.5 rounded-full ${isConnected ? 'bg-[#166534]' : 'bg-[#DC2626] animate-pulse'}`} />
+            <span className="text-[10px] font-mono font-black uppercase tracking-wider text-[#121110]">
+              {isConnected ? 'ENGINE ONLINE' : 'CONNECTING ENGINE...'}
             </span>
           </div>
         </div>
 
         {/* Error Alert if any */}
         {(errorMessage || nameError) && (
-          <div className="mb-4 p-3 rounded-xl bg-[#FDF2F2] border border-[#DFAFAF] text-[#8C3B3B] text-xs font-mono flex items-center justify-between">
+          <div className="mb-4 p-3 rounded-xl bg-[#FEE2E2] border border-[#EF4444] text-[#991B1B] text-xs font-mono font-bold flex items-center justify-between">
             <span>{errorMessage || nameError}</span>
             {nameError && (
               <button
                 type="button"
                 onClick={() => setNameError('')}
-                className="text-[#8C3B3B] hover:text-[#2C2623] ml-2 cursor-pointer font-bold"
+                className="text-[#991B1B] hover:text-[#121110] ml-2 cursor-pointer font-black"
               >
                 ✕
               </button>
@@ -159,44 +155,44 @@ export default function Lobby({
         )}
 
         {/* Toggle Mode: Create Room vs Join Code */}
-        <div className="flex items-center gap-1 bg-[#EAE2D3]/70 p-1 rounded-2xl border border-[#DCD2C0] mb-5">
+        <div className="flex items-center gap-1.5 bg-[#F7F4EE] p-1.5 rounded-2xl border border-[#D5CCC0] mb-5">
           <button
             type="button"
             onClick={() => { setTab('CREATE'); setNameError(''); }}
-            className={`flex-1 py-2 text-xs font-mono uppercase tracking-wider font-bold rounded-xl transition-all cursor-pointer ${
+            className={`flex-1 py-2.5 text-xs font-mono uppercase tracking-wider font-black rounded-xl transition-all cursor-pointer ${
               tab === 'CREATE'
-                ? 'bg-[#FAF7F2] text-[#2C2623] shadow-card-tactile border border-[#E2D9C8]'
-                : 'text-[#6E6259] hover:text-[#2C2623]'
+                ? 'bg-[#FFFFFF] text-[#121110] shadow-sm border border-[#D5CCC0]'
+                : 'text-[#6E645A] hover:text-[#121110]'
             }`}
           >
-            Create Table
+            CREATE TABLE
           </button>
           <button
             type="button"
             onClick={() => { setTab('JOIN'); setNameError(''); }}
-            className={`flex-1 py-2 text-xs font-mono uppercase tracking-wider font-bold rounded-xl transition-all cursor-pointer ${
+            className={`flex-1 py-2.5 text-xs font-mono uppercase tracking-wider font-black rounded-xl transition-all cursor-pointer ${
               tab === 'JOIN'
-                ? 'bg-[#FAF7F2] text-[#2C2623] shadow-card-tactile border border-[#E2D9C8]'
-                : 'text-[#6E6259] hover:text-[#2C2623]'
+                ? 'bg-[#FFFFFF] text-[#121110] shadow-sm border border-[#D5CCC0]'
+                : 'text-[#6E645A] hover:text-[#121110]'
             }`}
           >
-            Join with Code
+            JOIN WITH CODE
           </button>
         </div>
 
         {/* Player Name Input */}
-        <div className="mb-4">
+        <div className="mb-5">
           <div className="flex items-center justify-between mb-1.5">
-            <label htmlFor="player-handle-input" className="block text-[11px] font-mono uppercase tracking-wider text-[#6E6259] font-bold">
-              Player Handle / Nickname
+            <label htmlFor="player-handle-input" className="block text-[11px] font-mono uppercase tracking-wider text-[#121110] font-black">
+              PLAYER HANDLE / NICKNAME
             </label>
             <button
               type="button"
               onClick={handleRandomizeName}
-              className="text-[10px] font-mono text-[#8C4A1D] hover:text-[#2C2623] flex items-center gap-1 cursor-pointer transition-colors font-bold"
+              className="text-[10px] font-mono text-[#92400E] hover:text-[#121110] flex items-center gap-1 cursor-pointer transition-colors font-black"
             >
-              <RefreshCw className="w-3 h-3" />
-              <span>Randomize</span>
+              <RefreshCw className="w-3.5 h-3.5" />
+              <span>RANDOMIZE</span>
             </button>
           </div>
           <input
@@ -213,206 +209,148 @@ export default function Lobby({
               setPlayerName(e.target.value);
               if (nameError) setNameError('');
             }}
-            className={`w-full bg-[#EAE2D3]/50 border rounded-xl px-4 py-2.5 sm:py-3 text-sm font-mono text-[#2C2623] placeholder:text-[#9A8E84] focus:outline-none transition-colors ${
-              nameError ? 'border-[#D96B6B] ring-1 ring-[#D96B6B]/40' : 'border-[#DCD2C0] focus:border-[#8C4A1D]'
+            className={`w-full bg-[#F7F4EE] border-2 rounded-xl px-4 py-3 text-sm font-mono font-bold text-[#121110] placeholder:text-[#A89882] focus:outline-none transition-colors ${
+              nameError ? 'border-[#DC2626] ring-2 ring-[#DC2626]/30' : 'border-[#D5CCC0] focus:border-[#92400E]'
             }`}
           />
         </div>
 
-        {/* Team Selection Section */}
-        <div className="mb-5">
-          <div className="flex items-center justify-between mb-2">
-            <label className="text-[11px] font-mono uppercase tracking-wider text-[#6E6259] font-bold">
-              Team Affiliation
+        {/* Team Selection */}
+        {teamMode && (
+          <div className="mb-5">
+            <label className="block text-[11px] font-mono uppercase tracking-wider text-[#121110] font-black mb-2">
+              AFFILIATED TEAM (3-WAY BANKROLL SETTLEMENT)
             </label>
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] font-mono text-[#9A8E84]">Team Play</span>
-              <button
-                type="button"
-                onClick={() => setTeamMode(!teamMode)}
-                className={`w-9 h-5 rounded-full p-0.5 transition-colors cursor-pointer ${
-                  teamMode ? 'bg-[#9E7223]' : 'bg-[#DCD2C0]'
-                }`}
-              >
-                <div
-                  className={`w-4 h-4 rounded-full bg-[#FAF7F2] shadow-xs transition-transform ${
-                    teamMode ? 'translate-x-4' : 'translate-x-0'
+            <div className="grid grid-cols-3 gap-2">
+              {TEAMS.map((t) => (
+                <button
+                  key={t.id}
+                  type="button"
+                  onClick={() => setSelectedTeam(t.id)}
+                  className={`p-2.5 rounded-xl border-2 flex flex-col items-center text-center transition-all cursor-pointer ${
+                    selectedTeam === t.id
+                      ? `${t.accent} ring-2 ring-current font-black shadow-sm`
+                      : 'border-[#D5CCC0] bg-[#F7F4EE] hover:bg-[#FFFFFF] text-[#4A443E]'
                   }`}
-                />
-              </button>
+                >
+                  <span className={`w-3 h-3 rounded-full ${t.dot} mb-1`} />
+                  <span className="text-xs font-mono font-black">{t.name}</span>
+                </button>
+              ))}
             </div>
           </div>
+        )}
 
-          {teamMode && (
-            <div className="grid grid-cols-3 gap-2">
-              {TEAMS.map((t) => {
-                const isSelected = selectedTeam === t.id;
-                return (
-                  <button
-                    type="button"
-                    key={t.id}
-                    onClick={() => setSelectedTeam(t.id)}
-                    className={`p-2.5 sm:p-3 rounded-xl border flex flex-col items-center justify-center transition-all cursor-pointer active:scale-[0.97] touch-manipulation ${
-                      isSelected
-                        ? `${t.accent} shadow-card-tactile ring-2 ring-white/80`
-                        : 'border-[#E2D9C8] bg-[#FAF7F2] hover:bg-white text-[#6E6259]'
-                    }`}
-                  >
-                    <div className="flex items-center gap-1.5 mb-0.5">
-                      <span className={`w-2 h-2 rounded-full ${t.dot}`} />
-                      <span className="text-xs font-mono font-bold">{t.name.replace('Team ', '')}</span>
-                    </div>
-                    <span className="text-[9px] font-mono opacity-80">{t.desc}</span>
-                  </button>
-                );
-              })}
-            </div>
-          )}
-        </div>
-
-        {/* Tab 1: CREATE TABLE */}
-        {tab === 'CREATE' ? (
-          <form onSubmit={handleCreate} className="space-y-4">
-            {/* Table Settings Grid */}
-            <div className="grid grid-cols-2 gap-2.5 sm:gap-3 p-3 sm:p-4 rounded-2xl bg-[#EAE2D3]/50 border border-[#DCD2C0]">
-              {/* Starting Stack */}
-              <div>
-                <label className="text-[10px] font-mono uppercase text-[#6E6259] block mb-1">
-                  Starting Stack
-                </label>
-                <select
-                  value={startingStack}
-                  onChange={(e) => setStartingStack(parseInt(e.target.value))}
-                  className="w-full bg-[#FAF7F2] border border-[#DCD2C0] rounded-lg px-2.5 py-1.5 text-xs font-mono text-[#2C2623] focus:outline-none focus:border-[#8C4A1D] cursor-pointer"
-                >
-                  <option value={1000}>1,000 chips</option>
-                  <option value={2000}>2,000 chips (Standard)</option>
-                  <option value={5000}>5,000 chips (Deep Stack)</option>
-                  <option value={10000}>10,000 chips (High Roller)</option>
-                </select>
+        {/* Tab Content: CREATE TABLE */}
+        {tab === 'CREATE' && (
+          <div className="space-y-4">
+            <div className="bg-[#F7F4EE] p-4 rounded-2xl border border-[#D5CCC0] space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-mono text-[#4A443E] font-bold">STARTING STACK</span>
+                <span className="tabular-nums font-mono font-black text-sm text-[#121110]">
+                  {startingStack.toLocaleString()}
+                </span>
               </div>
+              <input
+                type="range"
+                min={500}
+                max={10000}
+                step={500}
+                value={startingStack}
+                onChange={(e) => setStartingStack(parseInt(e.target.value))}
+                className="w-full cursor-pointer"
+              />
 
-              {/* Blinds */}
-              <div>
-                <label className="text-[10px] font-mono uppercase text-[#6E6259] block mb-1">
-                  Blinds (SB / BB)
-                </label>
-                <select
-                  value={`${smallBlind}/${bigBlind}`}
-                  onChange={(e) => {
-                    const [sb, bb] = e.target.value.split('/').map(Number);
-                    setSmallBlind(sb);
-                    setBigBlind(bb);
-                  }}
-                  className="w-full bg-[#FAF7F2] border border-[#DCD2C0] rounded-lg px-2.5 py-1.5 text-xs font-mono text-[#2C2623] focus:outline-none focus:border-[#8C4A1D] cursor-pointer"
-                >
-                  <option value="5/10">5 / 10</option>
-                  <option value="10/20">10 / 20 (Standard)</option>
-                  <option value="25/50">25 / 50</option>
-                  <option value="50/100">50 / 100</option>
-                </select>
+              <div className="flex items-center justify-between pt-1">
+                <span className="text-xs font-mono text-[#4A443E] font-bold">BLINDS (SB/BB)</span>
+                <span className="tabular-nums font-mono font-black text-sm text-[#121110]">
+                  {smallBlind}/{bigBlind}
+                </span>
               </div>
+              <input
+                type="range"
+                min={5}
+                max={100}
+                step={5}
+                value={smallBlind}
+                onChange={(e) => {
+                  const sb = parseInt(e.target.value);
+                  setSmallBlind(sb);
+                  setBigBlind(sb * 2);
+                }}
+                className="w-full cursor-pointer"
+              />
 
-              {/* Turn Timer */}
-              <div>
-                <label className="text-[10px] font-mono uppercase text-[#6E6259] block mb-1">
-                  Turn Timer
-                </label>
-                <select
-                  value={turnTimeLimit}
-                  onChange={(e) => setTurnTimeLimit(parseInt(e.target.value))}
-                  className="w-full bg-[#FAF7F2] border border-[#DCD2C0] rounded-lg px-2.5 py-1.5 text-xs font-mono text-[#2C2623] focus:outline-none focus:border-[#8C4A1D] cursor-pointer"
-                >
-                  <option value={15}>15 Seconds (Fast)</option>
-                  <option value={20}>20 Seconds (Standard)</option>
-                  <option value={30}>30 Seconds (Relaxed)</option>
-                </select>
+              <div className="flex items-center justify-between pt-1">
+                <span className="text-xs font-mono text-[#4A443E] font-bold">TURN TIME LIMIT</span>
+                <span className="tabular-nums font-mono font-black text-sm text-[#121110]">
+                  {turnTimeLimit}s
+                </span>
               </div>
-
-              {/* Time Bank */}
-              <div>
-                <label className="text-[10px] font-mono uppercase text-[#6E6259] block mb-1">
-                  "Big Time" Bank
-                </label>
-                <select
-                  value={timeBankReserve}
-                  onChange={(e) => setTimeBankReserve(parseInt(e.target.value))}
-                  className="w-full bg-[#FAF7F2] border border-[#DCD2C0] rounded-lg px-2.5 py-1.5 text-xs font-mono text-[#2C2623] focus:outline-none focus:border-[#8C4A1D] cursor-pointer"
-                >
-                  <option value={20}>+20s Reserve</option>
-                  <option value={30}>+30s Reserve (Standard)</option>
-                  <option value={60}>+60s Reserve (Deep)</option>
-                </select>
-              </div>
+              <input
+                type="range"
+                min={10}
+                max={60}
+                step={5}
+                value={turnTimeLimit}
+                onChange={(e) => setTurnTimeLimit(parseInt(e.target.value))}
+                className="w-full cursor-pointer"
+              />
             </div>
 
-            {/* Teammate Sweat Mode Toggle */}
-            {teamMode && (
-              <div className="flex items-center justify-between p-2.5 sm:p-3 rounded-xl bg-[#EAE2D3]/40 border border-[#DCD2C0]">
-                <div>
-                  <span className="text-xs font-mono font-bold text-[#2C2623] block">
-                    Teammate Sweat Mode
-                  </span>
-                  <span className="text-[10px] font-mono text-[#6E6259]">
-                    Folded teammates can ghost-view active teammates' hole cards
-                  </span>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setTeammateSweatMode(!teammateSweatMode)}
-                  className={`w-9 h-5 rounded-full p-0.5 transition-colors cursor-pointer ${
-                    teammateSweatMode ? 'bg-[#36638F]' : 'bg-[#DCD2C0]'
-                  }`}
-                >
-                  <div
-                    className={`w-4 h-4 rounded-full bg-[#FAF7F2] shadow-xs transition-transform ${
-                      teammateSweatMode ? 'translate-x-4' : 'translate-x-0'
-                    }`}
-                  />
-                </button>
-              </div>
-            )}
-
-            {/* Launch Table Button: Tactile Warm Peach / Terracotta Keycap */}
             <button
               type="button"
               onClick={handleCreate}
               disabled={loading}
-              className="w-full py-3.5 sm:py-4 rounded-xl bg-[#FBE5D2] hover:bg-[#F7D5B8] text-[#8C4A1D] border border-[#E3B48D] border-b-2 border-b-[#CFA992] font-mono font-bold text-xs sm:text-sm uppercase tracking-wider shadow-card-tactile transition-all active:translate-y-[1px] disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer touch-manipulation select-none"
+              className="w-full py-3.5 rounded-xl bg-[#121110] hover:bg-[#2C2623] text-[#FAF8F5] font-mono text-sm font-black uppercase tracking-wider transition-all duration-150 active:scale-[0.98] flex items-center justify-center gap-2 shadow-sm cursor-pointer disabled:opacity-50"
             >
-              <Play className="w-4 h-4 fill-[#8C4A1D]" />
-              <span>{loading ? 'Creating Room...' : 'Launch Table'}</span>
+              {loading ? (
+                <span>CREATING ROOM...</span>
+              ) : (
+                <>
+                  <span>LAUNCH TABLE</span>
+                  <ArrowRight className="w-4 h-4" />
+                </>
+              )}
             </button>
-          </form>
-        ) : (
-          <form onSubmit={handleJoin} className="space-y-4">
+          </div>
+        )}
+
+        {/* Tab Content: JOIN WITH CODE */}
+        {tab === 'JOIN' && (
+          <div className="space-y-4">
             <div>
-              <label className="block text-[11px] font-mono uppercase tracking-wider text-[#6E6259] mb-1.5 font-bold">
-                6-Character Room Code
+              <label htmlFor="room-code-input" className="block text-[11px] font-mono uppercase tracking-wider text-[#121110] font-black mb-1.5">
+                6-CHARACTER ROOM CODE
               </label>
               <input
+                id="room-code-input"
                 type="text"
-                required
                 maxLength={6}
                 autoCapitalize="characters"
-                autoCorrect="off"
-                placeholder="e.g. 7K2M9X"
+                placeholder="e.g. PT8899"
                 value={joinCode}
                 onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
-                className="w-full bg-[#EAE2D3]/50 border border-[#DCD2C0] rounded-xl px-4 py-3 text-base font-mono font-extrabold text-[#8C4A1D] uppercase tracking-widest placeholder:text-[#9A8E84] focus:outline-none focus:border-[#8C4A1D] transition-colors text-center"
+                className="w-full bg-[#F7F4EE] border-2 border-[#D5CCC0] focus:border-[#92400E] rounded-xl px-4 py-3 text-center text-lg font-mono font-black tracking-widest text-[#121110] placeholder:text-[#A89882] focus:outline-none"
               />
             </div>
 
             <button
               type="button"
               onClick={handleJoin}
-              disabled={loading || !joinCode.trim()}
-              className="w-full py-3.5 sm:py-4 rounded-xl bg-[#FBE5D2] hover:bg-[#F7D5B8] text-[#8C4A1D] border border-[#E3B48D] border-b-2 border-b-[#CFA992] font-mono font-bold text-xs sm:text-sm uppercase tracking-wider shadow-card-tactile transition-all active:translate-y-[1px] disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer touch-manipulation select-none"
+              disabled={loading}
+              className="w-full py-3.5 rounded-xl bg-[#121110] hover:bg-[#2C2623] text-[#FAF8F5] font-mono text-sm font-black uppercase tracking-wider transition-all duration-150 active:scale-[0.98] flex items-center justify-center gap-2 shadow-sm cursor-pointer disabled:opacity-50"
             >
-              <ArrowRight className="w-4 h-4" />
-              <span>{loading ? 'Joining Room...' : 'Join Table'}</span>
+              {loading ? (
+                <span>CONNECTING...</span>
+              ) : (
+                <>
+                  <span>JOIN TABLE</span>
+                  <ArrowRight className="w-4 h-4" />
+                </>
+              )}
             </button>
-          </form>
+          </div>
         )}
       </motion.div>
     </div>

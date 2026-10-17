@@ -70,10 +70,11 @@ export default function ActionDock({
   };
 
   return (
-    <div className="fixed bottom-2 sm:bottom-3 left-1/2 -translate-x-1/2 w-full max-w-4xl px-2 sm:px-4 z-40 pb-safe">
-      <div className="relative bg-[#FAF7F2]/95 backdrop-blur-xl border border-[#E2D9C8] rounded-2xl p-2.5 sm:p-3.5 shadow-clay-ambient flex flex-col md:flex-row items-center justify-between gap-3 sm:gap-4">
+    <div className="fixed bottom-2 sm:bottom-3 left-1/2 -translate-x-1/2 w-full max-w-4xl px-2 sm:px-4 z-40 pb-safe select-none">
+      <div className="relative bg-[#FFFFFF]/98 backdrop-blur-xl border-2 border-[#D5CCC0] rounded-2xl p-3 sm:p-4 shadow-hardware-pod flex flex-col md:flex-row items-center justify-between gap-3 sm:gap-4">
+        
         {/* Left Section: Hole Cards & Live Hand Telemetry */}
-        <div className="flex items-center gap-2.5 sm:gap-3 w-full md:w-auto justify-between md:justify-start">
+        <div className="flex items-center gap-3 sm:gap-4 w-full md:w-auto justify-between md:justify-start">
           <div className="flex items-center -space-x-3 sm:-space-x-4">
             {myPlayer.holeCards && myPlayer.holeCards.length === 2 ? (
               myPlayer.holeCards.map((c, i) => (
@@ -93,23 +94,25 @@ export default function ActionDock({
             )}
           </div>
 
-          {/* Telemetry info badge */}
+          {/* Telemetry info block */}
           <div className="flex flex-col">
             <div className="flex items-center gap-1.5">
-              <span className="text-[9px] sm:text-[10px] font-mono uppercase tracking-wider text-[#9A8E84]">Hand Strength</span>
+              <span className="text-[9px] sm:text-[10px] font-mono uppercase tracking-wider text-[#6E645A] font-bold">
+                HAND STRENGTH
+              </span>
               {tableState.liveTelemetry?.tier === 'nuts' && (
-                <span className="flex items-center gap-0.5 text-[8px] sm:text-[9px] font-mono font-bold text-[#8C4A1D] bg-[#FBE5D2] px-1.5 py-0.2 rounded border border-[#E3B48D]">
+                <span className="flex items-center gap-0.5 text-[8px] sm:text-[9px] font-mono font-black text-[#92400E] bg-[#FEF3C7] px-1.5 py-0.2 rounded border border-[#F59E0B]">
                   <Flame className="w-2.5 h-2.5" /> High Equity
                 </span>
               )}
             </div>
 
-            <div className="text-xs sm:text-sm font-bold text-[#2C2623] flex items-center gap-1">
+            <div className="text-sm sm:text-base font-black text-[#121110] flex items-center gap-1">
               {tableState.liveTelemetry?.strength || (isFolded ? 'Folded' : 'Waiting for Cards...')}
             </div>
 
             {tableState.liveTelemetry?.description && (
-              <div className="text-[10px] sm:text-[11px] text-[#6E6259] font-mono">
+              <div className="text-[10px] sm:text-[11px] text-[#4A443E] font-mono font-bold">
                 {tableState.liveTelemetry.description}
               </div>
             )}
@@ -118,51 +121,51 @@ export default function ActionDock({
 
         {/* Center / Right Section: Controls & Action Triggers */}
         {isFolded ? (
-          <div className="text-xs sm:text-sm font-mono text-[#9A8E84] py-2 sm:py-3 flex items-center gap-2">
-            <AlertCircle className="w-4 h-4 text-[#9A8E84]" />
-            Folded this hand — observing table telemetry
+          <div className="text-xs sm:text-sm font-mono font-bold text-[#6E645A] py-2 sm:py-3 flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 text-[#92400E]" />
+            Folded this hand — observing telemetry
           </div>
         ) : isAllIn ? (
-          <div className="text-xs sm:text-sm font-mono font-bold text-[#8C4A1D] py-2 sm:py-3 flex items-center gap-2">
-            <Zap className="w-4 h-4" />
-            All-In ({myPlayer.chips + myStreetBet} total) — awaiting street runout
+          <div className="text-xs sm:text-sm font-mono font-black text-[#92400E] py-2 sm:py-3 flex items-center gap-2">
+            <Zap className="w-4 h-4 text-[#F59E0B]" />
+            All-In ({myPlayer.chips + myStreetBet} total) — awaiting runout
           </div>
         ) : (
           <div className="flex flex-col items-center md:items-end w-full md:w-auto gap-2">
-            {/* Quick-sizing pills + Bet Slider */}
+            {/* Quick-sizing pills + Bet Slider (When active turn) */}
             {isMyTurn && myPlayer.chips > toCall && (
-              <div className="flex flex-col w-full md:w-80 gap-1.5 bg-[#EAE2D3]/70 p-2 rounded-xl border border-[#DCD2C0]">
-                {/* Pills */}
+              <div className="flex flex-col w-full md:w-84 gap-1.5 bg-[#F7F4EE] p-2 rounded-xl border border-[#D5CCC0]">
+                {/* Sizing Pills */}
                 <div className="flex items-center justify-between gap-1 w-full">
                   <button
                     onClick={() => setBetAmount(calculateQuickSize('MIN'))}
-                    className="flex-1 py-1 text-[9px] sm:text-[10px] font-mono uppercase rounded bg-[#FAF7F2] hover:bg-white text-[#6E6259] hover:text-[#2C2623] border border-[#DCD2C0] transition-all active:scale-[0.96]"
+                    className="flex-1 py-1.5 min-h-[34px] text-[10px] font-mono uppercase font-black rounded-lg bg-[#FFFFFF] hover:bg-[#FEF3C7] text-[#121110] border border-[#D5CCC0] hover:border-[#F59E0B] transition-all active:scale-[0.96]"
                   >
-                    Min
+                    MIN
                   </button>
                   <button
                     onClick={() => setBetAmount(calculateQuickSize(0.5))}
-                    className="flex-1 py-1 text-[9px] sm:text-[10px] font-mono uppercase rounded bg-[#FAF7F2] hover:bg-white text-[#6E6259] hover:text-[#2C2623] border border-[#DCD2C0] transition-all active:scale-[0.96]"
+                    className="flex-1 py-1.5 min-h-[34px] text-[10px] font-mono uppercase font-black rounded-lg bg-[#FFFFFF] hover:bg-[#FEF3C7] text-[#121110] border border-[#D5CCC0] hover:border-[#F59E0B] transition-all active:scale-[0.96]"
                   >
-                    ½ Pot
+                    ½ POT
                   </button>
                   <button
                     onClick={() => setBetAmount(calculateQuickSize(0.75))}
-                    className="flex-1 py-1 text-[9px] sm:text-[10px] font-mono uppercase rounded bg-[#FAF7F2] hover:bg-white text-[#6E6259] hover:text-[#2C2623] border border-[#DCD2C0] transition-all active:scale-[0.96]"
+                    className="flex-1 py-1.5 min-h-[34px] text-[10px] font-mono uppercase font-black rounded-lg bg-[#FFFFFF] hover:bg-[#FEF3C7] text-[#121110] border border-[#D5CCC0] hover:border-[#F59E0B] transition-all active:scale-[0.96]"
                   >
-                    ¾ Pot
+                    ¾ POT
                   </button>
                   <button
                     onClick={() => setBetAmount(calculateQuickSize(1.0))}
-                    className="flex-1 py-1 text-[9px] sm:text-[10px] font-mono uppercase rounded bg-[#FAF7F2] hover:bg-white text-[#6E6259] hover:text-[#2C2623] border border-[#DCD2C0] transition-all active:scale-[0.96]"
+                    className="flex-1 py-1.5 min-h-[34px] text-[10px] font-mono uppercase font-black rounded-lg bg-[#FFFFFF] hover:bg-[#FEF3C7] text-[#121110] border border-[#D5CCC0] hover:border-[#F59E0B] transition-all active:scale-[0.96]"
                   >
-                    Pot
+                    POT
                   </button>
                   <button
                     onClick={() => setBetAmount(calculateQuickSize('ALL_IN'))}
-                    className="flex-1 py-1 text-[9px] sm:text-[10px] font-mono uppercase rounded bg-[#FBE5D2] hover:bg-[#F7D5B8] text-[#8C4A1D] border border-[#E3B48D] transition-all active:scale-[0.96] font-bold"
+                    className="flex-1 py-1.5 min-h-[34px] text-[10px] font-mono uppercase font-black rounded-lg bg-[#FEF3C7] hover:bg-[#FDE68A] text-[#92400E] border border-[#F59E0B] transition-all active:scale-[0.96]"
                   >
-                    Max
+                    ALL-IN
                   </button>
                 </div>
 
@@ -170,9 +173,9 @@ export default function ActionDock({
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => adjustBet(-tableState.config.bigBlind)}
-                    className="p-1 rounded bg-[#FAF7F2] hover:bg-white text-[#6E6259] active:scale-[0.95] border border-[#DCD2C0]"
+                    className="p-1.5 rounded-lg bg-[#FFFFFF] hover:bg-[#EAE3D6] text-[#121110] active:scale-[0.95] border border-[#D5CCC0]"
                   >
-                    <Minus className="w-3 h-3" />
+                    <Minus className="w-3.5 h-3.5" />
                   </button>
 
                   <input
@@ -187,89 +190,89 @@ export default function ActionDock({
 
                   <button
                     onClick={() => adjustBet(tableState.config.bigBlind)}
-                    className="p-1 rounded bg-[#FAF7F2] hover:bg-white text-[#6E6259] active:scale-[0.95] border border-[#DCD2C0]"
+                    className="p-1.5 rounded-lg bg-[#FFFFFF] hover:bg-[#EAE3D6] text-[#121110] active:scale-[0.95] border border-[#D5CCC0]"
                   >
-                    <Plus className="w-3 h-3" />
+                    <Plus className="w-3.5 h-3.5" />
                   </button>
 
-                  <span className="tabular-nums font-mono text-xs font-bold text-[#8C4A1D] min-w-[50px] text-right">
+                  <span className="tabular-nums font-mono text-sm font-black text-[#92400E] min-w-[55px] text-right">
                     {betAmount.toLocaleString()}
                   </span>
                 </div>
               </div>
             )}
 
-            {/* Action Buttons Row with Tactile Matte Keycaps (2px bottom lip) */}
-            <div className="flex items-center gap-1.5 sm:gap-2 w-full md:w-auto justify-end">
+            {/* Tactile Keycap Buttons Row with 2px Bottom Lip */}
+            <div className="flex items-center gap-2 w-full md:w-auto justify-end">
               {/* "Big Time" Button */}
               {isMyTurn && timeBank > 0 && (
                 <button
                   onClick={handleBigTimeClick}
-                  className="flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-2 sm:py-2.5 rounded-xl bg-[#F0E4F5] hover:bg-[#E4D1EC] text-[#6E4482] border border-[#D9BBE6] border-b-2 border-b-[#C499D9] text-[11px] sm:text-xs font-mono font-bold tracking-wider uppercase transition-all duration-150 active:translate-y-[1px] active:border-b shadow-sm"
+                  className="flex items-center gap-1.5 px-3 py-2.5 min-h-[44px] rounded-xl bg-[#F3E8FF] hover:bg-[#E9D5FF] text-[#6B21A8] border border-[#A855F7] border-b-2 border-b-[#7E22CE] text-xs font-mono font-black tracking-wider uppercase transition-all duration-120 active:translate-y-[2px] active:border-b-0 shadow-sm cursor-pointer"
                   title="Burn Time Bank reserve for +30s"
                 >
-                  <Clock className="w-3.5 h-3.5 animate-pulse text-[#6E4482]" />
-                  <span>Big Time</span>
-                  <span className="text-[9px] opacity-75">({timeBank}s)</span>
+                  <Clock className="w-4 h-4 animate-pulse text-[#6B21A8]" />
+                  <span>BIG TIME</span>
+                  <span className="text-[10px] font-bold">({timeBank}s)</span>
                 </button>
               )}
 
-              {/* Fold: Dusty Rose Pastel */}
+              {/* Fold Keycap */}
               <button
                 disabled={!isMyTurn}
                 onClick={() => handleActionClick('fold')}
-                className={`flex-1 sm:flex-none px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl font-mono text-[11px] sm:text-xs font-bold uppercase tracking-wider transition-all duration-150 active:translate-y-[1px] border ${
+                className={`flex-1 sm:flex-none px-5 py-2.5 min-h-[44px] rounded-xl font-mono text-xs font-black uppercase tracking-wider transition-all duration-120 active:translate-y-[2px] border ${
                   isMyTurn
-                    ? 'bg-[#F7E2E2] hover:bg-[#F2D0D0] text-[#8C3B3B] border-[#DFAFAF] border-b-2 border-b-[#DFAFAF] shadow-sm cursor-pointer'
-                    : 'bg-[#EAE2D3]/40 text-[#9A8E84] border-[#DCD2C0]/50 cursor-not-allowed opacity-50'
+                    ? 'bg-[#FEE2E2] hover:bg-[#FECACA] text-[#991B1B] border-[#EF4444] border-b-2 border-b-[#B91C1C] shadow-sm cursor-pointer'
+                    : 'bg-[#F7F4EE] text-[#A89882] border-[#D5CCC0] cursor-not-allowed opacity-60'
                 }`}
               >
-                Fold
+                FOLD
               </button>
 
-              {/* Check or Call: Soft Mint Sage */}
+              {/* Check or Call Keycap */}
               {canCheck ? (
                 <button
                   disabled={!isMyTurn}
                   onClick={() => handleActionClick('check')}
-                  className={`flex-1 sm:flex-none px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl font-mono text-[11px] sm:text-xs font-bold uppercase tracking-wider transition-all duration-150 active:translate-y-[1px] border ${
+                  className={`flex-1 sm:flex-none px-6 py-2.5 min-h-[44px] rounded-xl font-mono text-xs font-black uppercase tracking-wider transition-all duration-120 active:translate-y-[2px] border ${
                     isMyTurn
-                      ? 'bg-[#DFF0E4] hover:bg-[#CDE6D5] text-[#2B6340] border-[#A8D1B5] border-b-2 border-b-[#A8D1B5] shadow-sm cursor-pointer'
-                      : 'bg-[#EAE2D3]/40 text-[#9A8E84] border-[#DCD2C0]/50 cursor-not-allowed opacity-50'
+                      ? 'bg-[#DCFCE7] hover:bg-[#BBF7D0] text-[#166534] border-[#22C55E] border-b-2 border-b-[#15803D] shadow-sm cursor-pointer'
+                      : 'bg-[#F7F4EE] text-[#A89882] border-[#D5CCC0] cursor-not-allowed opacity-60'
                   }`}
                 >
-                  Check
+                  CHECK
                 </button>
               ) : (
                 <button
                   disabled={!isMyTurn}
                   onClick={() => handleActionClick('call')}
-                  className={`flex-1 sm:flex-none px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl font-mono text-[11px] sm:text-xs font-bold uppercase tracking-wider transition-all duration-150 active:translate-y-[1px] border flex items-center justify-center gap-1 sm:gap-1.5 ${
+                  className={`flex-1 sm:flex-none px-6 py-2.5 min-h-[44px] rounded-xl font-mono text-xs font-black uppercase tracking-wider transition-all duration-120 active:translate-y-[2px] border flex items-center justify-center gap-1.5 ${
                     isMyTurn
-                      ? 'bg-[#E6F0FA] hover:bg-[#D5E6F7] text-[#36638F] border-[#B3D1F0] border-b-2 border-b-[#B3D1F0] shadow-sm cursor-pointer'
-                      : 'bg-[#EAE2D3]/40 text-[#9A8E84] border-[#DCD2C0]/50 cursor-not-allowed opacity-50'
+                      ? 'bg-[#DBEAFE] hover:bg-[#BFDBFE] text-[#1E40AF] border-[#3B82F6] border-b-2 border-b-[#1D4ED8] shadow-sm cursor-pointer'
+                      : 'bg-[#F7F4EE] text-[#A89882] border-[#D5CCC0] cursor-not-allowed opacity-60'
                   }`}
                 >
-                  <span>Call</span>
-                  <span className="tabular-nums font-extrabold text-[#36638F]">
+                  <span>CALL</span>
+                  <span className="tabular-nums font-black text-[#1E40AF]">
                     {Math.min(myPlayer.chips, toCall).toLocaleString()}
                   </span>
                 </button>
               )}
 
-              {/* Bet or Raise: Warm Peach / Terracotta Pastel */}
+              {/* Bet or Raise Keycap */}
               {myPlayer.chips > toCall && (
                 <button
                   disabled={!isMyTurn}
                   onClick={() => handleActionClick('raise', betAmount)}
-                  className={`flex-1 sm:flex-none px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl font-mono text-[11px] sm:text-xs font-bold uppercase tracking-wider transition-all duration-150 active:translate-y-[1px] border flex items-center justify-center gap-1 sm:gap-1.5 ${
+                  className={`flex-1 sm:flex-none px-6 py-2.5 min-h-[44px] rounded-xl font-mono text-xs font-black uppercase tracking-wider transition-all duration-120 active:translate-y-[2px] border flex items-center justify-center gap-1.5 ${
                     isMyTurn
-                      ? 'bg-[#FBE5D2] hover:bg-[#F7D5B8] text-[#8C4A1D] border-[#E3B48D] border-b-2 border-b-[#E3B48D] shadow-sm cursor-pointer'
-                      : 'bg-[#EAE2D3]/40 text-[#9A8E84] border-[#DCD2C0]/50 cursor-not-allowed opacity-50'
+                      ? 'bg-[#FEF3C7] hover:bg-[#FDE68A] text-[#92400E] border-[#F59E0B] border-b-2 border-b-[#B45309] shadow-sm cursor-pointer'
+                      : 'bg-[#F7F4EE] text-[#A89882] border-[#D5CCC0] cursor-not-allowed opacity-60'
                   }`}
                 >
-                  <span>{currentBet === 0 ? 'Bet' : 'Raise'}</span>
-                  <span className="tabular-nums font-extrabold">
+                  <span>{currentBet === 0 ? 'BET' : 'RAISE'}</span>
+                  <span className="tabular-nums font-black">
                     {betAmount.toLocaleString()}
                   </span>
                 </button>

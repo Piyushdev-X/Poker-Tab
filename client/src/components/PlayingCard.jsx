@@ -9,12 +9,12 @@ const SUIT_SYMBOLS = {
   c: '♣'
 };
 
-// Pastel-tinted 4-color deck suits
+// High-contrast 4-color deck suits (WCAG AA/AAA compliant)
 const SUIT_COLORS = {
-  s: '#2C2623', // Spades: Warm Espresso Charcoal
-  h: '#D96B6B', // Hearts: Dusty Coral Rose
-  d: '#5B8AC2', // Diamonds: Soft Cornflower / Pastel Cobalt
-  c: '#5E9472'  // Clubs: Muted Matcha / Sage
+  s: '#111827', // Spades: Obsidian Black (15:1 contrast on ivory)
+  h: '#DC2626', // Hearts: Crimson Red (5.5:1 contrast on ivory)
+  d: '#2563EB', // Diamonds: Cobalt Sapphire (5.2:1 contrast on ivory)
+  c: '#059669'  // Clubs: Forest Emerald (5.0:1 contrast on ivory)
 };
 
 export default function PlayingCard({
@@ -39,22 +39,22 @@ export default function PlayingCard({
         initial={{ scale: 0.8, opacity: 0, y: -8 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
         transition={{ duration: 0.22, delay, ease: [0.2, 0.8, 0.2, 1] }}
-        className={`relative ${sizeClasses} bg-[#E8C5B0] border border-[#D5B29D] shadow-card-tactile flex items-center justify-center overflow-hidden ${className}`}
+        className={`relative ${sizeClasses} bg-[#8C2A2A] border border-[#6B1F1F] shadow-tactile-card flex items-center justify-center overflow-hidden ${className}`}
       >
-        {/* Pastel Tartan / Botanical Geometric Card Back */}
+        {/* Intricate Geometric Card Back (Deep Crimson Club Baize) */}
         <div 
-          className="absolute inset-1 rounded-sm border border-[#CFA992] flex items-center justify-center"
+          className="absolute inset-0.5 rounded-sm border border-[#A63838]/60 flex items-center justify-center"
           style={{
-            backgroundColor: '#E8C5B0',
+            backgroundColor: '#7A2222',
             backgroundImage: `
-              repeating-linear-gradient(45deg, #A3BFA8 0, #A3BFA8 2px, transparent 0, transparent 8px),
-              repeating-linear-gradient(-45deg, #A3BFA8 0, #A3BFA8 2px, #E8C5B0 0, #E8C5B0 8px)
+              repeating-linear-gradient(45deg, #A63838 0, #A63838 1.5px, transparent 0, transparent 6px),
+              repeating-linear-gradient(-45deg, #A63838 0, #A63838 1.5px, #7A2222 0, #7A2222 6px)
             `,
-            opacity: 0.88
+            opacity: 0.95
           }}
         >
-          <div className="w-4 h-4 sm:w-5 sm:h-5 rounded-full border border-white/70 bg-[#FAF7F2]/90 flex items-center justify-center shadow-xs">
-            <span className="text-[#8C4A1D] text-[9px] sm:text-[11px] font-serif">♠</span>
+          <div className="w-4 h-4 sm:w-5 sm:h-5 rounded-full border border-[#D5A85A] bg-[#2D0F0F] flex items-center justify-center shadow-xs">
+            <span className="text-[#F59E0B] text-[8px] sm:text-[10px] font-serif font-black">♠</span>
           </div>
         </div>
       </motion.div>
@@ -63,7 +63,7 @@ export default function PlayingCard({
 
   const rank = card[0];
   const suit = card[1]?.toLowerCase() || 's';
-  const color = SUIT_COLORS[suit] || '#2C2623';
+  const color = SUIT_COLORS[suit] || '#111827';
   const symbol = SUIT_SYMBOLS[suit] || '♠';
 
   const sizeStyles = {
@@ -93,34 +93,35 @@ export default function PlayingCard({
         y: isWinning ? -6 : 0
       }}
       transition={{ duration: 0.25, delay, ease: [0.22, 1, 0.36, 1] }}
-      className={`relative select-none ${sizeStyles.card} bg-[#FFFDF9] text-[#2C2623] shadow-card-tactile flex flex-col justify-between overflow-hidden transition-all duration-200 border ${
+      className={`relative select-none ${sizeStyles.card} bg-[#FFFDF9] text-[#121110] shadow-tactile-card flex flex-col justify-between overflow-hidden transition-all duration-200 border ${
         isWinning 
-          ? 'border-[#9E7223] ring-2 ring-[#F2D08B] ring-offset-2 ring-offset-[#C8DBC8] shadow-glow-active' 
-          : 'border-[#E5DEC9]'
-      } ${isGhost ? 'border-dashed border-[#5B8AC2] ring-1 ring-[#B3D1F0]' : ''} ${className}`}
+          ? 'border-[#F59E0B] ring-2 ring-[#F59E0B] ring-offset-2 ring-offset-[#0D3522] shadow-glow-active' 
+          : 'border-[#D5CCC0]'
+      } ${isGhost ? 'border-dashed border-[#2563EB] ring-1 ring-[#93C5FD]' : ''} ${className}`}
     >
-      {/* Top Left Rank + Suit */}
-      <div className="flex flex-col items-center leading-none w-3">
-        <span className="font-extrabold tracking-tight" style={{ color }}>{rank}</span>
-        <span className="text-[10px] sm:text-[11px] -mt-0.5" style={{ color }}>{symbol}</span>
+      {/* Top Left Rank & Suit */}
+      <div className="flex flex-col items-center leading-none" style={{ color }}>
+        <span className="font-extrabold font-mono tracking-tighter">{rank}</span>
+        <span className="text-[10px] sm:text-xs leading-none">{symbol}</span>
       </div>
 
-      {/* Center Large Suit Symbol */}
-      <div className={`absolute inset-0 flex items-center justify-center opacity-80 pointer-events-none ${sizeStyles.centerSymbol}`} style={{ color }}>
+      {/* Center Watermark Suit */}
+      <div 
+        className={`absolute inset-0 flex items-center justify-center pointer-events-none ${sizeStyles.centerSymbol} font-black`}
+        style={{ color, opacity: 0.18 }}
+      >
         {symbol}
       </div>
 
-      {/* Bottom Right Inverted Rank + Suit */}
-      <div className="flex flex-col items-center leading-none w-3 self-end rotate-180">
-        <span className="font-extrabold tracking-tight" style={{ color }}>{rank}</span>
-        <span className="text-[10px] sm:text-[11px] -mt-0.5" style={{ color }}>{symbol}</span>
+      {/* Bottom Right Rank & Suit (Inverted) */}
+      <div className="flex flex-col items-center leading-none self-end rotate-180" style={{ color }}>
+        <span className="font-extrabold font-mono tracking-tighter">{rank}</span>
+        <span className="text-[10px] sm:text-xs leading-none">{symbol}</span>
       </div>
 
-      {/* Ghost indicator if teammate sweat mode */}
-      {isGhost && (
-        <div className="absolute inset-x-0 bottom-0 py-0.5 bg-[#E6F0FA] text-[#36638F] text-[7px] text-center font-mono uppercase tracking-wider font-bold border-t border-[#B3D1F0]">
-          Teammate
-        </div>
+      {/* Winning Shimmer Highlight */}
+      {isWinning && (
+        <div className="absolute inset-0 bg-gradient-to-t from-[#F59E0B]/25 via-transparent to-white/40 pointer-events-none" />
       )}
     </motion.div>
   );

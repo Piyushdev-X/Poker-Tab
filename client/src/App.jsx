@@ -430,6 +430,113 @@ export default function App() {
   };
 
 
+  // Add Automated Test Bot to table
+  const handleAddBot = () => {
+    sounds.playChip();
+    const botNames = ['Doyle_Bot', 'Ivey_Bot', 'Brunson_Bot', 'Maverick_Bot', 'VegasKid_Bot', 'RiverKing_Bot'];
+    const botTeams = ['ALPHA', 'OMEGA', 'SIGMA'];
+    const botId = `bot_${Date.now().toString(36)}_${Math.random().toString(36).substring(2, 5)}`;
+    const botName = botNames[Math.floor(Math.random() * botNames.length)];
+    const botTeam = botTeams[Math.floor(Math.random() * botTeams.length)];
+
+    const emptySeat = tableState?.seats?.find(s => !s.player);
+    if (!emptySeat) return;
+    const seatNumber = emptySeat.seatNumber;
+
+    const botPlayer = {
+      id: botId,
+      name: botName,
+      team: botTeam,
+      chips: tableState?.config?.startingStack || 2000,
+      buyIn: tableState?.config?.startingStack || 2000,
+      rebuys: 0,
+      timeBank: tableState?.config?.timeBankReserve || 30,
+      isSittingOut: false
+    };
+
+    if (socket && socket.connected && roomCode !== 'SANDBOX') {
+      socket.emit('SIT_DOWN', {
+        roomCode,
+        seatNumber,
+        player: botPlayer
+      });
+    } else {
+      setTableState(prev => {
+        if (!prev) return prev;
+        const newSeats = [...prev.seats];
+        newSeats[seatNumber] = {
+          seatNumber,
+          player: {
+            ...botPlayer,
+            isTurn: false,
+            folded: false,
+            isAllIn: false,
+            streetBet: 0,
+            totalHandBet: 0,
+            holeCards: ['Ks', 'Qh'],
+            hasHoleCards: true,
+            isCardVisible: false
+          }
+        };
+        return { ...prev, seats: newSeats };
+      });
+    }
+  };
+
+  // Immediate Test Hand Deal
+  const handleDealTestHand = () => {
+    sounds.playCard();
+    const suits = ['s', 'h', 'd', 'c'];
+    const ranks = ['A', 'K', 'Q', 'J', 'T', '9', '8'];
+    const randomCard = () => `${ranks[Math.floor(Math.random() * ranks.length)]}${suits[Math.floor(Math.random() * suits.length)]}`;
+
+    setTableState(prev => {
+      if (!prev) return prev;
+      const sb = prev.config?.smallBlind || 10;
+      const bb = prev.config?.bigBlind || 20;
+      const newPot = sb + bb;
+
+      const updatedSeats = prev.seats.map((s, idx) => {
+        if (!s.player) return s;
+        const isMySeat = s.player.id === player.id;
+        const isSB = idx === 0;
+        const isBB = idx === 1;
+        const bet = isSB ? sb : isBB ? bb : 0;
+        return {
+          ...s,
+          player: {
+            ...s.player,
+            chips: Math.max(0, s.player.chips - bet),
+            streetBet: bet,
+            totalHandBet: bet,
+            folded: false,
+            isAllIn: false,
+            isTurn: isMySeat,
+            holeCards: isMySeat ? ['As', 'Kh'] : [randomCard(), randomCard()],
+            hasHoleCards: true,
+            isCardVisible: isMySeat
+          }
+        };
+      });
+
+      return {
+        ...prev,
+        status: 'FLOP',
+        communityCards: [randomCard(), randomCard(), randomCard()],
+        pot: newPot,
+        currentBet: bb,
+        activeSeat: 0,
+        turnExpiresAt: Date.now() + 20000,
+        lastShowdown: null,
+        liveTelemetry: {
+          strength: 'Two Pair (Aces & Kings)',
+          tier: 'nuts',
+          description: 'Dominant starting holding with top two pair'
+        }
+      };
+    });
+  };
+
   // Chat message send
   const handleSendMessage = (text, channel) => {
     if (!socket || !roomCode) return;
@@ -476,12 +583,11 @@ export default function App() {
         errorMessage={errorMsg}
         isConnected={isConnected}
       />
-
     );
   }
 
   return (
-    <div className="relative min-h-screen w-full text-[#2C2623] flex flex-col overflow-hidden">
+    <div className="relative h-[100dvh] max-h-[100dvh] w-full text-[#121110] flex flex-col overflow-hidden bg-[#F7F4EE]">
       {/* Top Telemetry Header */}
       <TeamHUD
         roomCode={roomCode}
@@ -496,19 +602,21 @@ export default function App() {
 
       {/* "Big Time" Event Banner Notification */}
       {bigTimeBanner && (
-        <div className="absolute top-16 left-1/2 -translate-x-1/2 z-50 px-4 py-2 rounded-xl bg-[#F0E4F5] border border-[#D9BBE6] text-[#6E4482] text-xs font-mono font-bold shadow-glow-bigtime animate-bounce flex items-center gap-2">
+        <div className="absolute top-16 left-1/2 -translate-x-1/2 z-50 px-4 py-2 rounded-xl bg-[#F3E8FF] border border-[#A855F7] text-[#6B21A8] text-xs font-mono font-black shadow-glow-bigtime animate-bounce flex items-center gap-2">
           <span>⏰</span>
           <span>{bigTimeBanner}</span>
         </div>
       )}
 
       {/* Main Table View Area */}
-      <main className="flex-1 flex items-center justify-center p-2 sm:p-4 md:p-6 pb-28 md:pb-36 overflow-hidden">
+      <main className="flex-1 flex items-center justify-center p-2 sm:p-4 md:p-6 pb-24 md:pb-32 overflow-hidden">
         <PokerTable
           tableState={tableState}
           myPlayerId={player.id}
           onSit={handleSit}
           onStand={handleStand}
+          onAddBot={handleAddBot}
+          onDealTestHand={handleDealTestHand}
         />
       </main>
 

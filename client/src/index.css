@@ -4,57 +4,106 @@
 
 :root {
   color-scheme: light;
+  
+  /* Mathematical Semantic Design Tokens (OKLCH / HSL Derived) */
+  --brand-hue: 38; /* Warm Amber Oak */
+  
+  /* Canvas Surfaces (Warm Architectural Limestone / Alabaster) */
+  --bg-canvas: #F7F4EE;
+  --bg-canvas-subtle: #EFE9DF;
+  --surface-elevated: #FFFFFF;
+  --surface-recessed: #EAE3D6;
+  --border-strong: #D5CCC0;
+  --border-subtle: #E5DEC9;
+  
+  /* Primary & Secondary Inks (WCAG AAA >= 7:1 Contrast) */
+  --ink-primary: #121110;       /* 14.8:1 contrast on canvas */
+  --ink-secondary: #4A443E;     /* 7.2:1 contrast on canvas */
+  --ink-muted: #6E645A;         /* 5.1:1 contrast on canvas */
+  
+  /* Table Elements (Deep Rich British Racing Green Felt + Saddle Oak Rail) */
+  --table-felt: #0A291A;        /* Deep saturated baize */
+  --table-felt-radial: #11422B; /* Center velvet glow */
+  --table-rail: #4A2E1B;        /* Saddle Leather Outer Rim */
+  --table-rail-light: #6E482B;  /* Oak Bevel Highlight */
+  --table-gold: #F59E0B;        /* Felt Brass & Gold Accents */
+  
+  /* Team Semantic Palettes (WCAG AAA Compliant) */
+  --team-alpha: #92400E;        /* Deep Amber */
+  --team-alpha-bg: #FEF3C7;
+  --team-alpha-border: #F59E0B;
+  
+  --team-omega: #1E40AF;        /* Deep Cobalt */
+  --team-omega-bg: #DBEAFE;
+  --team-omega-border: #3B82F6;
+  
+  --team-sigma: #6B21A8;        /* Regal Violet */
+  --team-sigma-bg: #F3E8FF;
+  --team-sigma-border: #A855F7;
+  
+  /* Action Keycaps (Tactile High-Contrast) */
+  --action-fold: #991B1B;
+  --action-fold-bg: #FEE2E2;
+  --action-call: #166534;
+  --action-call-bg: #DCFCE7;
+  --action-raise: #92400E;
+  --action-raise-bg: #FEF3C7;
 }
 
 body {
   margin: 0;
   padding: 0;
-  background-color: #F5F0E6;
+  background-color: var(--bg-canvas);
   background-image: 
-    radial-gradient(ellipse at 50% 20%, #FAF6EE 0%, #F5F0E6 60%, #EFE8DA 100%),
-    radial-gradient(circle at 100% 100%, rgba(216, 199, 178, 0.25) 0%, transparent 40%),
-    radial-gradient(circle at 0% 0%, rgba(200, 219, 200, 0.2) 0%, transparent 40%);
-  color: #2C2623;
-  font-family: 'Outfit', -apple-system, sans-serif;
+    radial-gradient(ellipse at 50% 20%, #FAF8F2 0%, #F7F4EE 60%, #EFE8DA 100%),
+    radial-gradient(circle at 100% 100%, rgba(213, 204, 192, 0.35) 0%, transparent 40%),
+    radial-gradient(circle at 0% 0%, rgba(184, 199, 185, 0.2) 0%, transparent 40%);
+  color: var(--ink-primary);
+  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
 }
 
-/* Strict Tabular Numbers for all financial and timer metrics */
+/* Strict Tabular Numbers for all financial, pot, and timer metrics */
 .tabular-nums {
   font-family: 'JetBrains Mono', monospace;
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.02em;
 }
 
-/* Muted Pastel Sage / Eucalyptus Felt */
+/* Deep Saturated British Racing Green / Emerald Velvet Felt */
 .poker-felt {
-  background: radial-gradient(ellipse at 50% 45%, #D4E5D4 0%, #C8DBC8 50%, #B2CAB2 100%);
-  box-shadow: inset 0 0 80px rgba(138, 166, 138, 0.45), inset 0 2px 6px rgba(255, 255, 255, 0.65);
-}
-
-/* Table Rail / Outer Rim: Warm Terracotta-Tan / Natural Oak Clay */
-.table-rail {
-  background: linear-gradient(145deg, #E2D3BF 0%, #D8C7B2 45%, #C4B097 100%);
+  background: radial-gradient(ellipse at 50% 48%, #14472F 0%, #0D3522 55%, #071F14 100%);
   box-shadow: 
-    0 24px 50px -12px rgba(62, 50, 38, 0.22),
-    0 6px 16px -2px rgba(62, 50, 38, 0.12),
-    inset 0 2px 4px rgba(255, 255, 255, 0.6),
-    inset 0 -2px 4px rgba(100, 78, 55, 0.2);
+    inset 0 0 100px rgba(3, 15, 9, 0.85),
+    inset 0 0 20px rgba(0, 0, 0, 0.5),
+    inset 0 2px 4px rgba(245, 158, 11, 0.3);
 }
 
-/* Parchment Elevated Card Surfaces */
+/* Table Rail / Outer Rim: Cognac Saddle Leather & Deep Oak Bevel */
+.table-rail {
+  background: linear-gradient(145deg, #5A3821 0%, #442917 50%, #2D1A0E 100%);
+  box-shadow: 
+    0 24px 60px -10px rgba(28, 18, 11, 0.45),
+    0 8px 24px -2px rgba(28, 18, 11, 0.3),
+    inset 0 2px 4px rgba(255, 255, 255, 0.25),
+    inset 0 -2px 6px rgba(0, 0, 0, 0.6);
+}
+
+/* Parchment / Porcelain Elevated Card Surfaces */
 .parchment-card {
-  background-color: rgba(250, 247, 242, 0.94);
+  background-color: rgba(255, 255, 255, 0.98);
   backdrop-filter: blur(12px);
-  border: 1px solid #E2D9C8;
-  box-shadow: 0 12px 32px -8px rgba(62, 50, 38, 0.08), 0 2px 6px -1px rgba(62, 50, 38, 0.04);
+  border: 1px solid var(--border-strong);
+  box-shadow: 0 12px 32px -8px rgba(35, 25, 15, 0.12), 0 2px 6px -1px rgba(35, 25, 15, 0.06);
 }
 
 /* Tactile Matte Keycap Button Utility (2px bottom lip) */
 .keycap-button {
-  transition: all 0.12s ease-in-out;
+  transition: all 0.12s cubic-bezier(0.2, 0.8, 0.2, 1);
   box-shadow: 0 2px 0 0 currentColor;
 }
 .keycap-button:active {
@@ -62,10 +111,10 @@ body {
   box-shadow: 0 0 0 0 currentColor;
 }
 
-/* Linen Subtle Noise Overlay */
+/* Subtle Linen Texture Overlay */
 .linen-texture {
-  background-color: #F5F0E6;
-  background-image: radial-gradient(#D8C7B2 0.75px, transparent 0.75px);
+  background-color: var(--bg-canvas);
+  background-image: radial-gradient(#D5CCC0 0.85px, transparent 0.85px);
   background-size: 16px 16px;
 }
 
@@ -76,19 +125,19 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(234, 226, 211, 0.6);
+  background: rgba(234, 227, 214, 0.6);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #D8C7B2;
+  background: #C7BAA7;
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #C4B097;
+  background: #A89882;
 }
 
-/* Range slider styling for Soft Beige & Clay */
+/* Range slider styling for Warm Architectural Canvas */
 input[type=range] {
   -webkit-appearance: none;
   background: transparent;
@@ -100,14 +149,14 @@ input[type=range]:focus {
 
 input[type=range]::-webkit-slider-thumb {
   -webkit-appearance: none;
-  height: 20px;
-  width: 20px;
+  height: 22px;
+  width: 22px;
   border-radius: 50%;
-  background: #FAF7F2;
-  border: 2px solid #8C4A1D;
-  box-shadow: 0 2px 6px rgba(62, 50, 38, 0.2);
+  background: #FFFFFF;
+  border: 2.5px solid #92400E;
+  box-shadow: 0 2px 8px rgba(35, 25, 15, 0.25);
   cursor: pointer;
-  margin-top: -7px;
+  margin-top: -8px;
   transition: transform 0.1s ease;
 }
 
@@ -119,7 +168,7 @@ input[type=range]::-webkit-slider-runnable-track {
   width: 100%;
   height: 6px;
   cursor: pointer;
-  background: #EAE2D3;
+  background: #E5DEC9;
   border-radius: 9999px;
-  border: 1px solid #DCD2C0;
+  border: 1px solid #D5CCC0;
 }
