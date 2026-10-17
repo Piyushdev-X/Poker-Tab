@@ -65,7 +65,7 @@ export default function PokerTable({
   const isSeated = seats.some(s => s.player?.id === myPlayerId);
 
   return (
-    <div className="relative w-[84vw] max-w-[340px] md:max-w-5xl h-[54dvh] sm:h-[58dvh] md:h-full aspect-[3/4] sm:aspect-[16/10] md:aspect-[16/9] flex items-center justify-center p-2 sm:p-6 my-auto select-none overflow-visible">
+    <div className="relative w-[84vw] max-w-[340px] md:max-w-5xl h-[54dvh] sm:h-[58dvh] md:h-full aspect-[3/4] sm:aspect-[16/10] md:aspect-[16/9] flex items-center justify-center p-2 sm:p-6 my-auto overflow-visible">
       {/* Outer Table Frame: Cognac Saddle Leather & Deep Oak Bevel (overflow-visible) */}
       <div className="relative w-full h-full rounded-[90px] sm:rounded-[140px] md:rounded-[200px] table-rail p-3.5 sm:p-5 md:p-7 flex items-center justify-center transition-all duration-300 overflow-visible">
         

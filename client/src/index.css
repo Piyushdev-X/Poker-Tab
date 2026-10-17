@@ -50,9 +50,19 @@
   --action-raise-bg: #FEF3C7;
 }
 
-body {
+html, body {
   margin: 0;
   padding: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  touch-action: pan-y;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: auto;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+body {
   background-color: var(--bg-canvas);
   background-image: 
     radial-gradient(ellipse at 50% 20%, #FAF8F2 0%, #F7F4EE 60%, #EFE8DA 100%),
@@ -62,9 +72,6 @@ body {
   font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  min-height: 100vh;
-  height: 100dvh;
-  overflow: hidden;
 }
 
 /* Strict Tabular Numbers for all financial, pot, and timer metrics */

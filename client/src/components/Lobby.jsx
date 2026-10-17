@@ -110,7 +110,7 @@ export default function Lobby({
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center p-3 sm:p-6 overflow-y-auto bg-[#F7F4EE]">
+    <div className="min-h-[100dvh] w-full flex flex-col items-center justify-start sm:justify-center p-3 sm:p-6 py-6 sm:py-10 overflow-y-auto bg-[#F7F4EE]">
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}

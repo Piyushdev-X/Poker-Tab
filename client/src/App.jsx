@@ -587,7 +587,7 @@ export default function App() {
   }
 
   return (
-    <div className="relative h-[100dvh] max-h-[100dvh] w-full text-[#121110] flex flex-col overflow-hidden bg-[#F7F4EE]">
+    <div className="relative min-h-[100dvh] h-[100dvh] w-full text-[#121110] flex flex-col overflow-x-hidden overflow-y-auto sm:overflow-hidden bg-[#F7F4EE]">
       {/* Top Telemetry Header */}
       <TeamHUD
         roomCode={roomCode}
@@ -609,7 +609,7 @@ export default function App() {
       )}
 
       {/* Main Table View Area */}
-      <main className="flex-1 flex items-center justify-center p-2 sm:p-4 md:p-6 pb-24 md:pb-32 overflow-hidden">
+      <main className="flex-1 flex items-center justify-center p-2 sm:p-4 md:p-6 pb-24 md:pb-32 overflow-visible">
         <PokerTable
           tableState={tableState}
           myPlayerId={player.id}
